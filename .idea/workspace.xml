@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="42b7d65d-3680-4cc8-8a59-cd945234df38" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1j3pT21bStnk1rQWi7HJIH6PTa2" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/main.py" />
+  </component>
+  <component name="RunManager">
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python">
+      <module name="PyTanagra" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="C:\Users\bapti\.conda\envs\PyTanagra\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="42b7d65d-3680-4cc8-8a59-cd945234df38" name="Default Changelist" comment="" />
+      <created>1603042633754</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1603042633754</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="206" y="39" width="1089" height="785" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1603042986991">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="206" y="39" width="1089" height="785" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1603042986991" />
+    <state x="481" y="222" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1603042978216">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="481" y="222" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1536.824@0.0.1536.824" timestamp="1603042978216" />
+    <state x="620" y="178" key="EnvironmentVariablesDialog" timestamp="1603042925941">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="620" y="178" key="EnvironmentVariablesDialog/0.0.1536.824@0.0.1536.824" timestamp="1603042925941" />
+    <state x="532" y="147" key="FileChooserDialogImpl" timestamp="1603042985551">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="532" y="147" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1603042985551" />
+    <state width="682" height="195" key="GridCell.Tab.0.bottom" timestamp="1603043022824">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="682" height="195" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1603043022824" />
+    <state width="682" height="195" key="GridCell.Tab.0.center" timestamp="1603043022823">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="682" height="195" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1603043022823" />
+    <state width="682" height="195" key="GridCell.Tab.0.left" timestamp="1603043022823">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="682" height="195" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1603043022823" />
+    <state width="682" height="195" key="GridCell.Tab.0.right" timestamp="1603043022824">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="682" height="195" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1603043022824" />
+  </component>
+</project>
