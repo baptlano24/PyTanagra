@@ -1,6 +1,9 @@
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from PyQt5.QtCore import QStringListModel
+from Back.ML_data import ML_data
 from Front.Welcome import Ui_MainWindow
 from Front.Data_WIndow import Ui_Dialog
+from Front.SelectVar import SelectVar
 import pandas as pd
 import sys
 from PyQt5 import QtWidgets
@@ -17,6 +20,15 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
         self.setupUi(self)
         self.browseButton.clicked.connect(self.browse_1)
         self.buttonBox.accepted.connect(self.accept_value)
+        self.ml_data = ML_data()
+        self.select_var = SelectVar()
+        self.select_var.trigger.connect(lambda x: self.test(x))
+
+    def test(self, test):
+        self.ml_data.set_target(test[0])
+        self.ml_data.set_features(test[1])
+        print(self.ml_data.target)
+        print(self.ml_data.feature)
 
     def browse_1(self):
         file = QFileDialog()
@@ -52,10 +64,13 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
             head = self.lineEdit_head.text()
         try:
             data = pd.read_csv(file, sep=sep, header=head, na_values=na_value, encoding=enc)
-            print(data)
-
+            self.ml_data.set_pd_data(data)
+            A = QStringListModel(data.columns.tolist())
+            self.select_var.Variables.setModel(A)
         except:
+
             QMessageBox.critical(self, "Erreur", "Erreur")
+        self.select_var.exec_()
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
