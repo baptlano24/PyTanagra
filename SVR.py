@@ -34,6 +34,7 @@ def SVR_b(X,Y,auto=True,params=None):
     Score of the chosen model,
     Values predicted by the model.
     """
+<<<<<<< Updated upstream
     
     if not(auto):
         p=list(params)
@@ -51,6 +52,11 @@ def SVR_b(X,Y,auto=True,params=None):
         print(svr.score(X,Y))
         
         Y_pred=svr.predict(X)
+=======
+    model = 1
+    if not(auto):
+        []=list(params)
+>>>>>>> Stashed changes
         
         fig1=plt.figure()
         plt.scatter(Y,Y_pred,marker='.')
