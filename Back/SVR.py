@@ -29,7 +29,7 @@ def SVR_b(X,Y,auto=True,params=None):
 
     Returns
     -------
-    FLOAT,FLOAT,NUMPY ARRAY
+    DICT,FLOAT,NUMPY ARRAY
     Parameters of the chosen model (the best or the one chosen by the user),
     Score of the chosen model,
     Values predicted by the model.
@@ -43,9 +43,9 @@ def SVR_b(X,Y,auto=True,params=None):
         else:
             [C,k,deg]=p
         if k=='linear':
-            svr = SVR(kernel=k,C=C)
+            svr = SVR(kernel=k,C=C,n_jobs=-1)
         else:
-            svr = SVR(kernel=k,degree=deg,C=C)
+            svr = SVR(kernel=k,degree=deg,C=C,n_jobs=-1)
         svr.fit(X,Y)
 
         print(svr.get_params())
