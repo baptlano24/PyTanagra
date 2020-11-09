@@ -6,7 +6,7 @@ Created on Mon Nov  2 13:47:38 2020
 """
 
 from sklearn.svm import SVR
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.metrics import r2_score, make_scorer
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -45,24 +45,25 @@ def SVR_b(X,Y,auto=True,params=None):
             svr = SVR(kernel=k,C=C,n_jobs=-1)
         else:
             svr = SVR(kernel=k,degree=deg,C=C,n_jobs=-1)
-        svr.fit(X,Y)
+        X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.3)
+        svr.fit(X_train,Y_train)
 
         print(svr.get_params())
-        print(svr.score(X,Y))
+        print(svr.score(X_test,Y_test))
         
-        Y_pred=svr.predict(X)
+        Y_pred=svr.predict(X_test)
         
         fig1=plt.figure()
-        plt.scatter(Y,Y_pred,marker='.')
+        plt.scatter(Y_test,Y_pred,marker='.')
         plt.xlabel('y')
         plt.ylabel('Y_pred')
         
         fig2=plt.figure()
-        plt.scatter(X[:,0],Y_pred,marker='.',c='r',label='Y_pred')
-        plt.scatter(X[:,0],Y,marker='.',c='b',label='Y')
+        plt.scatter(X_test[:,0],Y_pred,marker='.',c='r',label='Y_pred')
+        plt.scatter(X_test[:,0],Y_test,marker='.',c='b',label='Y')
         plt.xlabel('X_1')
         plt.legend()
-        return (svr.get_params(),svr.score(X,Y),svr.predict(X))
+        return (svr.get_params(),svr.score(X_test,Y_test),svr.predict(X_test))
     else:
         
         scorer = make_scorer(r2_score)
