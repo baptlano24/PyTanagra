@@ -1,9 +1,13 @@
+import numpy as np
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from PyQt5.QtCore import QStringListModel
 from Back.ML_data import ML_data
+from Back.SVR import SVR_b
+from Back.reg_lin import regression_lin
 from Front.Welcome import Ui_MainWindow
 from Front.Data_WIndow import Ui_Dialog
 from Front.SelectVar import SelectVar
+from Front.ModelQuant import ModelQua
 import pandas as pd
 import sys
 from PyQt5 import QtWidgets
@@ -23,12 +27,42 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
         self.ml_data = ML_data()
         self.select_var = SelectVar()
         self.select_var.trigger.connect(lambda x: self.test(x))
+        self.model_qua = ModelQua()
+        self.model_qua.trigger_model.connect(lambda x: self.model_qua_launch(x))
 
     def test(self, test):
+        print(test[1])
         self.ml_data.set_target(test[0])
         self.ml_data.set_features(test[1])
-        print(self.ml_data.target)
-        print(self.ml_data.feature)
+        print(str(self.ml_data.target_type))
+        if self.ml_data.target_type.all() == np.float64 or self.ml_data.target_type.all() == np.int64:
+            print("Quantitative")
+            self.model_qua.open()
+        else:
+            print("QUALI")
+            self.model_qua.open()
+
+    def model_qua_launch(self,dict):
+        if "SVR" in dict:
+            SVR = dict["SVR"]
+            if SVR["Auto"]:
+                result = SVR_b(self.ml_data.feature,self.ml_data.target,SVR["Auto"])
+                print("SVR",result)
+            else:
+                print(self.ml_data.feature)
+                print(self.ml_data.target)
+                result = SVR_b(self.ml_data.feature, self.ml_data.target, SVR["Auto"], [SVR["C"], SVR["Kernel"],SVR["Degree"]])
+                print("SVR",result)
+        elif "LR" in dict:
+            LR = dict["LR"]
+            if LR["Auto"]:
+                result = regression_lin(self.ml_data.feature,self.ml_data.target, LR["Auto"])
+                print("LR",result)
+            else:
+                result = regression_lin(self.ml_data.feature,self.ml_data.target, LR["Auto"], LR["test_size"])
+                print("LR",result)
+
+
 
     def browse_1(self):
         file = QFileDialog()

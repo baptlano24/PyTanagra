@@ -34,29 +34,24 @@ def SVR_b(X,Y,auto=True,params=None):
     Score of the chosen model,
     Values predicted by the model.
     """
-<<<<<<< Updated upstream
-    
     if not(auto):
-        p=list(params)
-        if len(p)==2:
-            [C,k]=p
+        print("param",params)
+        if len(params)==2:
+            [C,k]=params
         else:
-            [C,k,deg]=p
+            [C,k,deg]=params
         if k=='linear':
-            svr = SVR(kernel=k,C=C,n_jobs=-1)
+            svr = SVR(kernel=k,C=C)
+            #n_jobs = -1
         else:
-            svr = SVR(kernel=k,degree=deg,C=C,n_jobs=-1)
+            svr = SVR(kernel=k,degree=deg,C=C)
+            #n_jobs = -1
         svr.fit(X,Y)
 
         print(svr.get_params())
         print(svr.score(X,Y))
         
         Y_pred=svr.predict(X)
-=======
-    model = 1
-    if not(auto):
-        []=list(params)
->>>>>>> Stashed changes
         
         fig1=plt.figure()
         plt.scatter(Y,Y_pred,marker='.')
@@ -74,7 +69,8 @@ def SVR_b(X,Y,auto=True,params=None):
         scorer = make_scorer(r2_score)
         svr = SVR()
         params = {'C':[1,2,3],'kernel':['linear','poly','rbf'],'degree':[2,3]}
-        reg = GridSearchCV(svr, param_grid=params, cv=10, scoring=scorer ,n_jobs=-1)
+        reg = GridSearchCV(svr, param_grid=params, cv=10, scoring=scorer)
+         #n_jobs = -1
         reg.fit(X,Y)
         
         print(reg.cv_results_['mean_test_score']) #Scores comparés

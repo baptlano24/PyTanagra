@@ -16,9 +16,10 @@ class ML_data:
         self.pd_data = data
 
     def set_target(self, data):
-        self.target = self.pd_data[data].to_numpy()
+        self.target = self.pd_data[data].to_numpy().ravel()
         self.target_type = self.pd_data[data].dtypes
 
     def set_features(self,data):
-        self.feature = self.pd_data[data].to_numpy()
+        self.feature = self.pd_data[data]
+        self.feature = self.feature.to_numpy()
         self.feature_type = self.pd_data[data].dtypes
