@@ -35,7 +35,6 @@ def SVR_b(X,Y,auto=True,params=None):
     Values predicted by the model.
     """
     if not(auto):
-        print("param",params)
         if len(params)==2:
             [C,k]=params
         else:
@@ -48,8 +47,8 @@ def SVR_b(X,Y,auto=True,params=None):
         X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.3)
         svr.fit(X_train,Y_train)
 
-        print(svr.get_params())
-        print(svr.score(X_test,Y_test))
+        #print(svr.get_params())
+        #print(svr.score(X_test,Y_test))
         
         Y_pred=svr.predict(X_test)
         
@@ -73,11 +72,11 @@ def SVR_b(X,Y,auto=True,params=None):
          #n_jobs = -1
         reg.fit(X,Y)
         
-        print(reg.cv_results_['mean_test_score']) #Scores comparés
-        print(reg.best_params_) #Meilleures valeurs de paramètres
-        print(reg.best_score_) #Meilleur score
+        #print(reg.cv_results_['mean_test_score']) #Scores comparés
+        #print(reg.best_params_) #Meilleures valeurs de paramètres
+        #print(reg.best_score_) #Meilleur score
         
-        
+
         Y_pred=reg.predict(X)
         
         fig1=plt.figure()

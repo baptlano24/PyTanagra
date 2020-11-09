@@ -17,7 +17,7 @@ def RegTree(X,Y,auto=True,params=None):
     
     if not(auto):
         X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.3)
-        [criterion,min_split,min_leaf]=list(params)
+        [criterion,min_split,min_leaf]= params
         
         tree = DecisionTreeRegressor(criterion=criterion, min_samples_split=min_split, min_samples_leaf=min_leaf)
         tree.fit(X_train,Y_train)
@@ -70,17 +70,17 @@ def RegTree(X,Y,auto=True,params=None):
         return (reg.best_params_,reg.best_score_,reg.predict(X))
     
 ###Test
-import numpy as np
+##import numpy as np
 
 
-dur=5
-t = np.arange(0,dur,0.01)
+##dur=5
+##t = np.arange(0,dur,0.01)
 
-sinusoid = np.transpose(2*t)
-t= np.transpose(np.array([t,t**2]))
-sinusoid=np.random.normal(0,1,sinusoid.shape)+sinusoid
-p=['friedman_mse',2,1]
-print(RegTree(X=t,Y=sinusoid,auto=False,params=p))
+#sinusoid = np.transpose(2*t)
+#t= np.transpose(np.array([t,t**2]))
+#sinusoid=np.random.normal(0,1,sinusoid.shape)+sinusoid
+#p=['friedman_mse',2,1]
+#print(RegTree(X=t,Y=sinusoid,auto=False,params=p))
  
  
 # df=pd.read_csv('data_breast_cancer.csv',encoding='latin-1',sep=',')

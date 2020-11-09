@@ -3,7 +3,7 @@ import numpy as np
 
 
 class ML_data:
-    """Structure pour stocker la data ML"""
+    """Data structure for Machine Learning algorithms"""
     def __init__(self):
         self.pd_data = None
         self.target = None
