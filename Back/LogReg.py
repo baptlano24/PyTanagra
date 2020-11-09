@@ -7,7 +7,7 @@ Created on Sun Nov  8 10:23:20 2020
 
 
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.metrics import f1_score, make_scorer
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -36,21 +36,23 @@ def LogReg(X,Y,auto=True,params=None):
     
     if not(auto):
         [C,penalty]=list(params)
+        X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.3)
+        
         reg=LogisticRegression(penalty=penalty,C=C,n_jobs=-1)
-        reg.fit(X,Y)
-        Y_pred=reg.predict(X)
+        reg.fit(X_train,Y_train)
+        Y_pred=reg.predict(X_test)
         print(reg.get_params())
-        print(f1_score(Y,Y_pred))
+        print(f1_score(Y_test,Y_pred))
         
         pca = PCA(n_components=2)
-        temp = pca.fit_transform(X)
+        temp = pca.fit_transform(X_test)
         
         
         ###Comparison of the best model with the actual classes using PCA
         fig1, (ax1, ax2) = plt.subplots(1, 2,figsize=(10,5))
         
         ax1.set_title("Vraie Classification")
-        ax1.scatter(temp[:,0],temp[:,1],c=Y,marker='.')
+        ax1.scatter(temp[:,0],temp[:,1],c=Y_test,marker='.')
         
         ax2.set_title("Classification prédite")
         ax2.scatter(temp[:,0],temp[:,1],c=Y_pred,marker='.')
@@ -61,13 +63,13 @@ def LogReg(X,Y,auto=True,params=None):
         fig2, (ax1, ax2) = plt.subplots(1, 2,figsize=(10,5))
         
         ax1.set_title("Vraie Classification")
-        ax1.scatter(X[:,0],X[:,1],c=Y,marker='.')
+        ax1.scatter(X_test[:,0],X_test[:,1],c=Y_test,marker='.')
         
         ax2.set_title("Classification prédite")
-        ax2.scatter(X[:,0],X[:,1],c=Y_pred,marker='.')
+        ax2.scatter(X_test[:,0],X_test[:,1],c=Y_pred,marker='.')
         
         plt.suptitle("Classification représentée dans l'espace réel")
-        return (reg.get_params(),f1_score(Y,Y_pred),Y_pred)
+        return (reg.get_params(),f1_score(Y_test,Y_pred),Y_pred)
     else:
         
         scorer = make_scorer(f1_score)
