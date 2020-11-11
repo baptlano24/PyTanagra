@@ -2,7 +2,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from math import sqrt
-
+from time import time
+#import matplotlib.pyplot as plt
 
 def regression_lin(X, y, Auto, t_size=None):
     # X = variables explicatives
@@ -15,6 +16,7 @@ def regression_lin(X, y, Auto, t_size=None):
     if t_size < 0 or t_size > 1:
         return "t_size doit être compris entre 0 et 1"
 
+    start = time() # début du chrono
     # Echantillonage
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=t_size)
     # Instanciation du modèle
@@ -33,8 +35,10 @@ def regression_lin(X, y, Auto, t_size=None):
     # plt.plot(y_test, y_pred, ".", color="blue")  # modele predit
     # plt.plot(y_test, y_test, ".", color="green")  # modele réelle
     # plt.show()
+    done = time() # fin du chrono
+    elapsed = done - start # temps de calcul
 
-    return y_pred, mse, rmse, r2
+    return y_pred, mse, rmse, r2, elapsed
 
 # TEST
 # import pandas as pd
