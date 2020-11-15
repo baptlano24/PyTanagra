@@ -36,7 +36,7 @@ def arbre_clas(X, y, Auto, nb_regle = None, profondeur = None, nb_indiv = None):
         # Définition des données
         scorer = make_scorer(f1_score)
         modele = DecisionTreeClassifier()
-        params = {"max_leaf_nodes": list(range(2, 100)), "max_depth": [10, 30, 50], "min_samples_split": [int(taille_ech/10), int(taille_ech/20), int(taille_ech/20)]}
+        params = {"max_leaf_nodes": list(range(2, 100)), "max_depth": [10, 30, 50], "min_samples_split": [int(taille_ech/10), int(taille_ech/20), int(taille_ech/30)]}
 
         # Instanciation et exécution
         search = GridSearchCV(modele, param_grid=params, cv=5, scoring=scorer)
@@ -47,9 +47,20 @@ def arbre_clas(X, y, Auto, nb_regle = None, profondeur = None, nb_indiv = None):
 
     # Si les hyper-paramètres ont été défini par l'utilisateur
     else:
+        # Si l'utilisateur n'a pas renseigné nb_indiv, on estime le paramètre
         if nb_indiv == None:
-            nb_indiv = int(taille_ech/10) # A MODIFIER POUR POUVOIR LE TUNNER !!!!
+            # Définition des données
+            scorer = make_scorer(f1_score)
+            modele = DecisionTreeClassifier()
+            params = {"min_samples_split": [int(taille_ech/10), int(taille_ech/20), int(taille_ech/30)]}
+            # Instanciation et exécution
+            search = GridSearchCV(modele, param_grid=params, cv=5, scoring=scorer)
+            search.fit(X_train, y_train)
+            # Récupération des sorties
+            nb_indiv = search.best_params_.get("min_samples_split") #la meilleur valeur du parametre
+
         arbre = DecisionTreeClassifier(max_leaf_nodes=nb_regle, max_depth=profondeur, min_samples_split=nb_indiv)
+
 
     # Entrainement
     arbre.fit(X_train, y_train)
@@ -75,4 +86,4 @@ def arbre_clas(X, y, Auto, nb_regle = None, profondeur = None, nb_indiv = None):
 #x_ = data.iloc[:,:13]
 #y_ = pd.DataFrame(data.iloc[:,13])
 #print(arbre_clas(x_, y_, True)) OK
-#print(arbre_clas(x_, y_, False, profondeur=2)) OK
+#print(arbre_clas(x_, y_, False, profondeur=2)) ok
