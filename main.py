@@ -5,10 +5,13 @@ from Back.ML_data import ML_data
 from Back.SVR import SVR_b
 from Back.reg_lin import regression_lin
 from Back.TreeReg import RegTree
+from Back.KNN import knn_class
+from Back.LogReg import LogReg
 from Front.Welcome import Ui_MainWindow
 from Front.Data_WIndow import Ui_Dialog
 from Front.SelectVar import SelectVar
 from Front.ModelQuant import ModelQua
+from Front.ModelQuali import ModelQualitative
 import pandas as pd
 import sys
 from PyQt5 import QtWidgets
@@ -39,8 +42,10 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
         # When the signal of SelectVar() is "emitted"
         self.select_var.trigger.connect(lambda x: self.test(x))
         self.model_qua = ModelQua()
+        self.model_quali = ModelQualitative()
         # When the signal of ModelQua() is "emitted"
         self.model_qua.trigger_model.connect(lambda x: self.model_qua_launch(x))
+        self.model_quali.trigger_model.connect(lambda x: self.model_qua_launch(x))
 
     def test(self, test):
         """setting of Target and Features of ML_data + choose beetween ModelQua() or ModelQuali()
@@ -52,6 +57,7 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
             self.model_qua.open()
         else:
             print("QUALI")
+            self.model_quali.open()
 
     def model_qua_launch(self, dict):
         """Launch all model Quantitative from dict signal of ModelQua()"""
@@ -85,6 +91,26 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
                                                                                          RT["Min_Samples_Split"],
                                                                                          RT["Min_Samples_Leaf"]])
                 print("RT", result)
+
+        if "KNN" in dict:
+            KNN = dict["KNN"]
+            print(KNN)
+            if KNN["Auto"]:
+                result = knn_class(self.ml_data.feature, self.ml_data.target,KNN["Auto"])
+                print("KNN", result)
+            else:
+                result = knn_class(self.ml_data.feature, self.ml_data.target, KNN["Auto"], [KNN["leaf_size"],KNN["n_neighbors"],KNN["p"],KNN["metric"]])
+                print("KNN",result)
+        if "LogiR" in dict:
+            LogiR = dict["LogiR"]
+            if LogiR["Auto"]:
+                result = LogReg(self.ml_data.feature, self.ml_data.target, LogiR["Auto"])
+                print("LogiR", result)
+            else:
+                result = LogReg(self.ml_data.feature, self.ml_data.target, LogiR["Auto"], [LogiR['C'],
+                                                                                           LogiR['penalty']])
+                print("LogiR",result)
+
 
     def browse_1(self):
         """Function which browse csv file/Text file/Xlsx file"""

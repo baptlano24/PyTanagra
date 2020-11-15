@@ -38,44 +38,44 @@ def LogReg(X,Y,auto=True,params=None):
         [C,penalty]=list(params)
         X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.3)
         
-        reg=LogisticRegression(penalty=penalty,C=C,n_jobs=-1)
+        reg=LogisticRegression(solver="saga",penalty=penalty,C=C,n_jobs=-1)
         reg.fit(X_train,Y_train)
         Y_pred=reg.predict(X_test)
         print(reg.get_params())
-        print(f1_score(Y_test,Y_pred))
+        print(f1_score(Y_test,Y_pred,pos_label=Y[0]))
         
         pca = PCA(n_components=2)
         temp = pca.fit_transform(X_test)
         
         
         ###Comparison of the best model with the actual classes using PCA
-        fig1, (ax1, ax2) = plt.subplots(1, 2,figsize=(10,5))
+        #fig1, (ax1, ax2) = plt.subplots(1, 2,figsize=(10,5))
         
-        ax1.set_title("Vraie Classification")
-        ax1.scatter(temp[:,0],temp[:,1],c=Y_test,marker='.')
+        #ax1.set_title("Vraie Classification")
+        #ax1.scatter(temp[:,0],temp[:,1],c=Y_test,marker='.')
         
-        ax2.set_title("Classification prédite")
-        ax2.scatter(temp[:,0],temp[:,1],c=Y_pred,marker='.')
+        #ax2.set_title("Classification prédite")
+        #ax2.scatter(temp[:,0],temp[:,1],c=Y_pred,marker='.')
         
-        plt.suptitle("Classification représentée dans l'espace des deux premières composantes principales")
+        #plt.suptitle("Classification représentée dans l'espace des deux premières composantes principales")
         
         ###Comparison of the best model with the actual classes in the real space
-        fig2, (ax1, ax2) = plt.subplots(1, 2,figsize=(10,5))
+        #fig2, (ax1, ax2) = plt.subplots(1, 2,figsize=(10,5))
         
-        ax1.set_title("Vraie Classification")
-        ax1.scatter(X_test[:,0],X_test[:,1],c=Y_test,marker='.')
+        #ax1.set_title("Vraie Classification")
+        #ax1.scatter(X_test[:,0],X_test[:,1],c=Y_test,marker='.')
         
-        ax2.set_title("Classification prédite")
-        ax2.scatter(X_test[:,0],X_test[:,1],c=Y_pred,marker='.')
+        #ax2.set_title("Classification prédite")
+        #ax2.scatter(X_test[:,0],X_test[:,1],c=Y_pred,marker='.')
         
-        plt.suptitle("Classification représentée dans l'espace réel")
-        return (reg.get_params(),f1_score(Y_test,Y_pred),Y_pred)
+        #plt.suptitle("Classification représentée dans l'espace réel")
+        return (reg.get_params(),f1_score(Y_test,Y_pred,pos_label=Y[0]),Y_pred)
     else:
-        
-        scorer = make_scorer(f1_score)
-        modele = LogisticRegression()
-        params = {'C':[0,0.5,1,2,3],'penalty':['l1','l2','elasticnet']}
-        reg = GridSearchCV(modele, param_grid=params, cv=10, scoring=scorer ,n_jobs=-1)
+        print(Y[0],"Y")
+        scorer = make_scorer(f1_score,pos_label=Y[0])
+        modele = LogisticRegression(solver="saga")
+        params = {'C':[0,0.5,1,2,3],'penalty':['l1','l2','elasticnet'],'l1_ratio': 0.5}
+        reg = GridSearchCV(modele, param_grid=params, cv=10, scoring=scorer,n_jobs=-1)
         reg.fit(X,Y)
         
         print(reg.cv_results_['mean_test_score']) #Scores comparés
@@ -90,26 +90,26 @@ def LogReg(X,Y,auto=True,params=None):
         
         
         ###Comparison of the best model with the actual classes using PCA
-        fig1, (ax1, ax2) = plt.subplots(1, 2,figsize=(10,5))
+        #fig1, (ax1, ax2) = plt.subplots(1, 2,figsize=(10,5))
         
-        ax1.set_title("Vraie Classification")
-        ax1.scatter(temp[:,0],temp[:,1],c=Y,marker='.')
+        #ax1.set_title("Vraie Classification")
+        #ax1.scatter(temp[:,0],temp[:,1],c=Y,marker='.')
         
-        ax2.set_title("Classification prédite")
-        ax2.scatter(temp[:,0],temp[:,1],c=Y_pred,marker='.')
+        #ax2.set_title("Classification prédite")
+        #ax2.scatter(temp[:,0],temp[:,1],c=Y_pred,marker='.')
         
-        plt.suptitle("Classification représentée dans l'espace des deux premières composantes principales")
+        #plt.suptitle("Classification représentée dans l'espace des deux premières composantes principales")
         
         ###Comparison of the best model with the actual classes in the real space
-        fig2, (ax1, ax2) = plt.subplots(1, 2,figsize=(10,5))
+        #fig2, (ax1, ax2) = plt.subplots(1, 2,figsize=(10,5))
         
-        ax1.set_title("Vraie Classification")
-        ax1.scatter(X[:,0],X[:,1],c=Y,marker='.')
+        #ax1.set_title("Vraie Classification")
+        #ax1.scatter(X[:,0],X[:,1],c=Y,marker='.')
         
-        ax2.set_title("Classification prédite")
-        ax2.scatter(X[:,0],X[:,1],c=Y_pred,marker='.')
+        #ax2.set_title("Classification prédite")
+        #ax2.scatter(X[:,0],X[:,1],c=Y_pred,marker='.')
         
-        plt.suptitle("Classification représentée dans l'espace réel")
+        #plt.suptitle("Classification représentée dans l'espace réel")
         return (reg.best_params_,reg.best_score_,reg.predict(X))
  
 ###Test
