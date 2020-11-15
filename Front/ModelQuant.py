@@ -130,7 +130,7 @@ class ModelQua(QtWidgets.QDialog, Ui_Model_quanti):
         dict_model = {}
         if self.LR_use.isChecked():
             dict_model["LR"] = {}
-            if self.LR_use.isChecked():
+            if self.LR_auto.isChecked():
                 dict_model["LR"]["Auto"] = True
             else:
                 dict_model["LR"]["Auto"] = False
