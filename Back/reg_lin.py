@@ -3,42 +3,58 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from math import sqrt
 from time import time
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import mean_squared_error, make_scorer
 #import matplotlib.pyplot as plt
 
-def regression_lin(X, y, Auto, t_size=None):
+def regression_lin(X, y, Auto, intercept = True, normal = False):
     # X = variables explicatives
     # y = variable cible
-    # t_size = hyperparametre defini par l'utilisateur permettant de definir la proportion du train/test
-    # default = 0.3
-    if Auto:
-        t_size = 0.3
-    # Test de vérification du paramètre t_size
-    if t_size < 0 or t_size > 1:
-        return "t_size doit être compris entre 0 et 1"
 
-    start = time() # début du chrono
+    start = time()  # début du chrono
+
     # Echantillonage
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=t_size)
-    # Instanciation du modèle
-    modele = LinearRegression()  # pas d'hyperparametres
-    # Entrainement
-    modele.fit(X_train, y_train)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+    # Mode automatique --> Optimisation des hyper-paramètres
+    if Auto:
+        # Définition des données
+        scorer = make_scorer(mean_squared_error)
+        modele = LinearRegression()
+        params = {"fit_intercept": [True, False], "normalize": [True, False]}
+
+        # Instanciation et exécution
+        search = GridSearchCV(modele, param_grid=params, cv=5, scoring=scorer)
+        search.fit(X_train, y_train)
+
+        # Récupération des sorties
+        reg = search.best_estimator_  # meilleur modèle
+
+    else:
+    # Si les hyper-paramètres ont été défini par l'utilisateur
+        # Instanciation du modèle
+        reg = LinearRegression(fit_intercept=intercept, normalize=normal)
+        # Entrainement
+        reg.fit(X_train, y_train)
+
     # Prediction
-    y_pred = modele.predict(X_test)
-    # Evaluation
+    y_pred = reg.predict(X_test)
+        # Evaluation
     mse = mean_squared_error(y_test, y_pred)
-    rmse = sqrt(mse)
-    r2 = r2_score(y_test, y_pred)
+    # rmse = sqrt(mse)
+    # r2 = r2_score(y_test, y_pred)
+    graph = {'X_1': X_train.iloc[:, 0], 'Y': y_train, 'Y_pred': y_pred}
 
     # Pour le graphique:
     # import matplotlib.pyplot as plt
     # plt.plot(y_test, y_pred, ".", color="blue")  # modele predit
     # plt.plot(y_test, y_test, ".", color="green")  # modele réelle
     # plt.show()
+
     done = time() # fin du chrono
     elapsed = done - start # temps de calcul
 
-    return y_pred, mse, rmse, r2, elapsed
+    return reg.get_params(), y_pred, mse, graph, elapsed
 
 # TEST
 # import pandas as pd
@@ -51,9 +67,9 @@ def regression_lin(X, y, Auto, t_size=None):
 # bike["mnth"] = bike["mnth"].astype(str)
 # bike["hr"] =bike["hr"].astype(str)
 # bike2 = pd.get_dummies(bike)
-
+#
 # y_bis = bike2["cnt"] #ce que l'utilisateur a défini comme var_cible
 # X_bis = bike2.drop("cnt", axis=1)
 
-# print(regression_lin(X_bis, y_bis, 0.35)) #test OK
-# print(regression_lin(X_bis, y_bis, 5)) #test OK
+print(regression_lin(X_bis, y_bis, True)) #test OK
+# print(regression_lin(X_bis, y_bis, False, True, True)) #test OK

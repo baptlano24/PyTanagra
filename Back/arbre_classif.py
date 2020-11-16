@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.metrics import make_scorer, f1_score
+from sklearn.metrics import make_scorer, f1_score, confusion_matrix
 from sklearn import metrics
 import matplotlib.pyplot as plt
 from time import time
@@ -36,7 +36,7 @@ def arbre_clas(X, y, Auto, nb_regle = None, profondeur = None, nb_indiv = None):
         # Définition des données
         scorer = make_scorer(f1_score)
         modele = DecisionTreeClassifier()
-        params = {"max_leaf_nodes": list(range(2, 100)), "max_depth": [10, 30, 50], "min_samples_split": [int(taille_ech/10), int(taille_ech/20), int(taille_ech/30)]}
+        params = {"max_leaf_nodes": list(range(2, 50)), "max_depth": [10, 20, 30], "min_samples_split": [int(taille_ech/10), int(taille_ech/20), int(taille_ech/30)]}
 
         # Instanciation et exécution
         search = GridSearchCV(modele, param_grid=params, cv=5, scoring=scorer)
@@ -74,16 +74,17 @@ def arbre_clas(X, y, Auto, nb_regle = None, profondeur = None, nb_indiv = None):
     # Evaluation
     report = metrics.classification_report(y_test, pred, output_dict=True)
     recap = pd.DataFrame(report).transpose()
+    conf = confusion_matrix(y_test, pred) #matrice de confusion
 
     done = time()  # fin du chrono
     elapsed = done - start  # temps de calcul
 
-    return pred, report, elapsed
+    return arbre.get_params(), conf, report, pred, elapsed
 
 
 #Test
-#data = pd.read_excel("C:/Users/Axelle/Desktop/M/03_SISE/heart.xlsx", sheet_name = 0)
-#x_ = data.iloc[:,:13]
-#y_ = pd.DataFrame(data.iloc[:,13])
-#print(arbre_clas(x_, y_, True)) OK
-#print(arbre_clas(x_, y_, False, profondeur=2)) ok
+data = pd.read_excel("C:/Users/Axelle/Desktop/M/03_SISE/heart.xlsx", sheet_name = 0)
+x_ = data.iloc[:,:13]
+y_ = pd.DataFrame(data.iloc[:,13])
+print(arbre_clas(x_, y_, True))
+#print(arbre_clas(x_, y_, False, profondeur=2, nb_indiv=30, nb_regle=5))
