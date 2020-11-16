@@ -71,5 +71,5 @@ def regression_lin(X, y, Auto, intercept = True, normal = False):
 # y_bis = bike2["cnt"] #ce que l'utilisateur a défini comme var_cible
 # X_bis = bike2.drop("cnt", axis=1)
 
-print(regression_lin(X_bis, y_bis, True)) #test OK
+# print(regression_lin(X_bis, y_bis, True)) #test OK
 # print(regression_lin(X_bis, y_bis, False, True, True)) #test OK
