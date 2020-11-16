@@ -10,6 +10,7 @@ from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.metrics import r2_score, make_scorer
 import pandas as pd
 import matplotlib.pyplot as plt
+from time import perf_counter
 
 def SVR_b(X,Y,auto=True,params=None):
     """
@@ -23,8 +24,8 @@ def SVR_b(X,Y,auto=True,params=None):
         if TRUE the function will perform a cross-validation to find the optimal parameters for the SVM Regression
         otherwise the user has to specify the parameters used. The default is True.
     params : LIST of length 2 or 3, optional
-        C - regularisation parameter (float>=0), 
-        kernel - type of kernel used among : 'linear’, ‘poly’, ‘rbf’, ‘sigmoid’, ‘precomputed', 
+        C - regularisation parameter (float>=0),
+        kernel - type of kernel used among : 'linear’, ‘poly’, ‘rbf’, ‘sigmoid’, ‘precomputed',
         degree - degree of the ploynomial kernel. The default is None.
 
     Returns
@@ -34,6 +35,7 @@ def SVR_b(X,Y,auto=True,params=None):
     Score of the chosen model,
     Values predicted by the model.
     """
+    start = perf_counter()
     if not(auto):
         if len(params)==2:
             [C,k]=params
@@ -49,49 +51,53 @@ def SVR_b(X,Y,auto=True,params=None):
 
         #print(svr.get_params())
         #print(svr.score(X_test,Y_test))
-        
+
         Y_pred=svr.predict(X_test)
-        
-        fig1=plt.figure()
-        plt.scatter(Y_test,Y_pred,marker='.')
-        plt.xlabel('y')
-        plt.ylabel('Y_pred')
-        
-        fig2=plt.figure()
-        plt.scatter(X_test[:,0],Y_pred,marker='.',c='r',label='Y_pred')
-        plt.scatter(X_test[:,0],Y_test,marker='.',c='b',label='Y')
-        plt.xlabel('X_1')
-        plt.legend()
-        return (svr.get_params(),svr.score(X_test,Y_test),svr.predict(X_test))
+
+        # fig1=plt.figure()
+        # plt.scatter(Y_test,Y_pred,marker='.')
+        # plt.xlabel('y')
+        # plt.ylabel('Y_pred')
+        #
+        # fig2=plt.figure()
+        # plt.scatter(X_test[:,0],Y_pred,marker='.',c='r',label='Y_pred')
+        # plt.scatter(X_test[:,0],Y_test,marker='.',c='b',label='Y')
+        # plt.xlabel('X_1')
+        # plt.legend()
+        graphs={'X_1':X_test[:,0],'Y':Y_test,'Y_pred':Y_pred}
+        end=perf_counter()
+        return svr.get_params(),svr.score(X_test,Y_test),svr.predict(X_test),graphs,end-start
     else:
-        
+
         scorer = make_scorer(r2_score)
         svr = SVR()
         params = {'C':[1,2,3],'kernel':['linear','poly','rbf'],'degree':[2,3]}
         reg = GridSearchCV(svr, param_grid=params, cv=10, scoring=scorer)
          #n_jobs = -1
         reg.fit(X,Y)
-        
+
         #print(reg.cv_results_['mean_test_score']) #Scores comparés
         #print(reg.best_params_) #Meilleures valeurs de paramètres
         #print(reg.best_score_) #Meilleur score
-        
+
 
         Y_pred=reg.predict(X)
-        
-        fig1=plt.figure()
-        plt.scatter(Y,Y_pred,marker='.')
-        plt.xlabel('y')
-        plt.ylabel('Y_pred')
-        
-        fig2=plt.figure()
-        plt.scatter(X[:,0],Y_pred,marker='.',c='r',label='Y_pred')
-        plt.scatter(X[:,0],Y,marker='.',c='b',label='Y')
-        plt.xlabel('X_1')
-        plt.legend()
-        
-        return (reg.best_params_,reg.best_score_,reg.predict(X))
- 
+
+        # fig1=plt.figure()
+        # plt.scatter(Y,Y_pred,marker='.')
+        # plt.xlabel('y')
+        # plt.ylabel('Y_pred')
+        #
+        # fig2=plt.figure()
+        # plt.scatter(X[:,0],Y_pred,marker='.',c='r',label='Y_pred')
+        # plt.scatter(X[:,0],Y,marker='.',c='b',label='Y')
+        # plt.xlabel('X_1')
+        # plt.legend()
+
+        graphs = {'X_1': X[:, 0], 'Y': Y, 'Y_pred': Y_pred}
+        end = perf_counter()
+        return reg.best_params_,reg.best_score_,reg.predict(X),graphs,end-start
+
 ###Test
 # import numpy as np
 
@@ -104,8 +110,8 @@ def SVR_b(X,Y,auto=True,params=None):
 # sinusoid=np.random.normal(0,1,sinusoid.shape)+sinusoid
 # p=[1.0,'linear']
 # print(SVR_b(X=t,Y=sinusoid,auto=False,params=p))
- 
- 
+
+
 # # df=pd.read_csv('data_breast_cancer.csv',encoding='latin-1',sep=',')
 # # df['diagnosis']=(df['diagnosis']=='M').astype(int)
 # # del df['id']

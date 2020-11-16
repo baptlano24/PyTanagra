@@ -8,10 +8,11 @@ Created on Sun Nov  8 10:23:20 2020
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV, train_test_split
-from sklearn.metrics import f1_score, make_scorer
+from sklearn.metrics import f1_score, make_scorer,confusion_matrix, classification_report
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
+from time import perf_counter
 
 def LogReg(X,Y,auto=True,params=None):
 
@@ -24,7 +25,7 @@ def LogReg(X,Y,auto=True,params=None):
         if TRUE the function will perform a cross-validation to find the optimal parameters for the Logistic Regression
         otherwise the user has to specify the parameters used. The default is True.
     params : LIST of length 2, optional
-        C - regularisation parameter (float>=0), 
+        C - regularisation parameter (float>=0),
         penalty - type of penalty used among : 'none’, ‘l1’, ‘l2’, ‘elasticnet’.The default is None.
     Returns
     -------
@@ -33,43 +34,45 @@ def LogReg(X,Y,auto=True,params=None):
     Score of the chosen model,
     Values predicted by the model.
     """
-    
+    start=perf_counter()
     if not(auto):
         [C,penalty]=list(params)
         X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.3)
-        
+
         reg=LogisticRegression(solver="saga",penalty=penalty,C=C,n_jobs=-1)
         reg.fit(X_train,Y_train)
         Y_pred=reg.predict(X_test)
-        print(reg.get_params())
-        print(f1_score(Y_test,Y_pred,pos_label=Y[0]))
-        
+
         pca = PCA(n_components=2)
-        temp = pca.fit_transform(X_test)
-        
-        
+        acp = pca.fit_transform(X_test)
+
+        cm = confusion_matrix(Y, Y_pred)
+        cr = classification_report(Y, Y_pred)
+
         ###Comparison of the best model with the actual classes using PCA
         #fig1, (ax1, ax2) = plt.subplots(1, 2,figsize=(10,5))
-        
+
         #ax1.set_title("Vraie Classification")
         #ax1.scatter(temp[:,0],temp[:,1],c=Y_test,marker='.')
-        
+
         #ax2.set_title("Classification prédite")
         #ax2.scatter(temp[:,0],temp[:,1],c=Y_pred,marker='.')
-        
+
         #plt.suptitle("Classification représentée dans l'espace des deux premières composantes principales")
-        
+
         ###Comparison of the best model with the actual classes in the real space
         #fig2, (ax1, ax2) = plt.subplots(1, 2,figsize=(10,5))
-        
+
         #ax1.set_title("Vraie Classification")
         #ax1.scatter(X_test[:,0],X_test[:,1],c=Y_test,marker='.')
-        
+
         #ax2.set_title("Classification prédite")
         #ax2.scatter(X_test[:,0],X_test[:,1],c=Y_pred,marker='.')
-        
+
         #plt.suptitle("Classification représentée dans l'espace réel")
-        return (reg.get_params(),f1_score(Y_test,Y_pred,pos_label=Y[0]),Y_pred)
+        graphs = {'ACP_0': acp[:, 0],'acp_1': acp[:, 1], 'Y': Y, 'Y_pred': Y_pred}
+        end = perf_counter()
+        return reg.get_params(),cm,cr,graphs,end-start
     else:
         print(Y[0],"Y")
         scorer = make_scorer(f1_score,pos_label=Y[0])
@@ -77,41 +80,44 @@ def LogReg(X,Y,auto=True,params=None):
         params = {'C':[0,0.5,1,2,3],'penalty':['l1','l2','elasticnet'],'l1_ratio': 0.5}
         reg = GridSearchCV(modele, param_grid=params, cv=10, scoring=scorer,n_jobs=-1)
         reg.fit(X,Y)
-        
+
         print(reg.cv_results_['mean_test_score']) #Scores comparés
         print(reg.best_params_) #Meilleures valeurs de paramètres
         print(reg.best_score_) #Meilleur score
-        
-        
+
+
         pca = PCA(n_components=2)
-        temp = pca.fit_transform(X)
-        
+        acp = pca.fit_transform(X)
+
         Y_pred=reg.predict(X)
-        
-        
+        cm = confusion_matrix(Y, Y_pred)
+        cr = classification_report(Y, Y_pred)
+
         ###Comparison of the best model with the actual classes using PCA
         #fig1, (ax1, ax2) = plt.subplots(1, 2,figsize=(10,5))
-        
+
         #ax1.set_title("Vraie Classification")
         #ax1.scatter(temp[:,0],temp[:,1],c=Y,marker='.')
-        
+
         #ax2.set_title("Classification prédite")
         #ax2.scatter(temp[:,0],temp[:,1],c=Y_pred,marker='.')
-        
+
         #plt.suptitle("Classification représentée dans l'espace des deux premières composantes principales")
-        
+
         ###Comparison of the best model with the actual classes in the real space
         #fig2, (ax1, ax2) = plt.subplots(1, 2,figsize=(10,5))
-        
+
         #ax1.set_title("Vraie Classification")
         #ax1.scatter(X[:,0],X[:,1],c=Y,marker='.')
-        
+
         #ax2.set_title("Classification prédite")
         #ax2.scatter(X[:,0],X[:,1],c=Y_pred,marker='.')
-        
+
         #plt.suptitle("Classification représentée dans l'espace réel")
-        return (reg.best_params_,reg.best_score_,reg.predict(X))
- 
+        graphs = {'ACP_0': acp[:, 0],'acp_1': acp[:, 1], 'Y': Y, 'Y_pred': Y_pred}
+        end = perf_counter()
+        return reg.best_params_,cm,cr,graphs,end-start
+
 ###Test
 # import numpy as np
 
@@ -124,8 +130,8 @@ def LogReg(X,Y,auto=True,params=None):
 # # sinusoid=np.random.normal(0,1,sinusoid.shape)+sinusoid
 # # p=[1.0,'linear']
 # # print(SVR_b(X=t,Y=sinusoid))
- 
- 
+
+
 # df=pd.read_csv('data_breast_cancer.csv',encoding='latin-1',sep=',')
 # df['diagnosis']=(df['diagnosis']=='M').astype(int)
 # del df['id']

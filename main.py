@@ -24,7 +24,7 @@ def data_open():
 
 
 class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
-    """Dialogue Window which have :
+    """Dialogue Window which has :
      - Download data
      - ML Data
      - SelectVar()
