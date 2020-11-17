@@ -112,18 +112,34 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
                 dict_model["KNN"]["Auto"] = True
             else:
                 dict_model["KNN"]["Auto"] = False
-                dict_model["KNN"]["leaf_size"] = int(self.KNN_leafsize.text())
-                dict_model["KNN"]["n_neighbors"] = int(self.KNN_n.text())
                 dict_model["KNN"]["p"] = self.combo_p.currentText()
                 dict_model["KNN"]["metric"] = self.combo_metric.currentText()
+                # Verification of the parameter leaf size
+                if float(self.KNN_leafsize.text())>=1 and int(float(self.KNN_leafsize.text()))==float(self.KNN_leafsize.text()):
+                    dict_model["KNN"]["leaf_size"] = int(float(self.KNN_leafsize.text()))
+                else:
+                    QMessageBox.critical(self, "Erreur de paramètre", "Leaf Size doit être un entier supérieur ou égal à 1.")
+                # Verification of the parameter n_neighbors
+                if float(self.KNN_n.text())>=1 and float(self.KNN_n.text())==int(float(self.KNN_n.text())):
+                    dict_model["KNN"]["n_neighbors"] = int(float(self.KNN_n.text()))
+                else:
+                    QMessageBox.critical(self, "Erreur de paramètre",
+                                         "n_neighbors doit être un entier supérieur ou égal à 1.")
         if self.LogiR_use.isChecked():
             dict_model["LogiR"] = {}
             if self.LogiR_auto.isChecked():
                 dict_model["LogiR"]["Auto"] = True
             else:
                 dict_model["LogiR"]["Auto"] = False
-                dict_model["LogiR"]["C"] = int(self.LogiR_C.text())
                 dict_model["LogiR"]["penalty"] = self.combo_penality.currentText()
+                # Verification of the parameter C
+                if float(self.SVR_c.text())>=0:
+                    dict_model["LogiR"]["C"] = float(self.LogiR_C.text())
+                else:
+                    QMessageBox.critical(self, "Erreur de paramètre", "C correspond à la pénalisation du modèle choisi. C doit être un réel positif. Si vous souhaitez un modèle non pénalisé, il suffit d'avoir C=0 et de sélection n'importe quelle pénalité.")
+
+                dict_model["LogiR"]["C"] = int(self.LogiR_C.text())
+
 
         if self.RT_use.isChecked():
             dict_model["RT"] = {}
@@ -132,8 +148,23 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
             else:
                 dict_model["RT"]["Auto"] = False
                 dict_model["RT"]["Criterion"] = self.combo_criterion.currentText()
-                dict_model["RT"]["Min_Samples_Split"] = int(self.RT_mss.text())
-                dict_model["RT"]["Min_Samples_Leaf"] = int(self.RT_mse.text())
+                # Verification of the parameter Min_Samples_Split
+                if int(float(self.RT_mss.text())) == float(self.RT_mss.text()) and int(float(self.RT_mss.text())) >= 2:
+                    dict_model["RT"]["Min_Samples_Split"] = int(self.RT_mss.text())
+                elif float(self.RT_mss.text()) <= 1 and float(self.RT_mss.text()) > 0:
+                    dict_model["RT"]["Min_Samples_Split"] = float(self.RT_mss.text())
+                else:
+                    QMessageBox.critical(self, "Erreur de paramètre",
+                                         "Min_Samples_Split est soit un entier supérieur à 2 et dans ce cas, il correspond au nombre minumum nécessaire à la création d'un nœud. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer un nœud.")
+                # Verification of the parameter Min_Samples_Leaf
+                if int(float(self.RT_mse.text())) == float(self.RT_mse.text()) and int(float(self.RT_mse.text())) >= 1:
+                    dict_model["RT"]["Min_Samples_Leaf"] = int(self.RT_mse.text())
+                elif float(self.RT_mse.text()) <= 1 and float(self.RT_mse.text()) > 0:
+                    dict_model["RT"]["Min_Samples_Leaf"] = float(self.RT_mse.text())
+                else:
+                    QMessageBox.critical(self, "Erreur de paramètre",
+                                         "Min_Samples_Leaf est soit un entier supérieur à 1 et dans ce cas, il correspond au nombre minumum nécessaire à la création d'une feuille. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer une feuille.")
+
         self.close()
         self.trigger_model.emit(dict_model)
 
