@@ -35,19 +35,20 @@ def LogReg(X,Y,auto=True,params=None):
     Values predicted by the model.
     """
     start=perf_counter()
+    label_list = list(set(Y))
     if not(auto):
         [C,penalty]=list(params)
         X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.3)
 
-        reg=LogisticRegression(solver="saga",penalty=penalty,C=C,n_jobs=-1)
+        reg=LogisticRegression(solver="saga",penalty=penalty, C=C, n_jobs=-1)
         reg.fit(X_train,Y_train)
         Y_pred=reg.predict(X_test)
 
         pca = PCA(n_components=2)
         acp = pca.fit_transform(X_test)
 
-        cm = confusion_matrix(Y, Y_pred)
-        cr = classification_report(Y, Y_pred)
+        cm = confusion_matrix(Y_test, Y_pred,labels=label_list)
+        cr = classification_report(Y_test, Y_pred,target_names=label_list, output_dict=True)
 
         ###Comparison of the best model with the actual classes using PCA
         #fig1, (ax1, ax2) = plt.subplots(1, 2,figsize=(10,5))
@@ -70,9 +71,11 @@ def LogReg(X,Y,auto=True,params=None):
         #ax2.scatter(X_test[:,0],X_test[:,1],c=Y_pred,marker='.')
 
         #plt.suptitle("Classification représentée dans l'espace réel")
-        graphs = {'ACP_0': acp[:, 0],'ACP_1': acp[:, 1], 'Y': Y, 'Y_pred': Y_pred}
+        graphs = {'ACP_0': acp[:, 0],'ACP_1': acp[:, 1], 'Y': Y_test, 'Y_pred': Y_pred}
+        df_cm = pd.DataFrame(cm, index=label_list,
+                             columns=label_list).transpose()
         end = perf_counter()
-        return reg.get_params(),cm,cr,graphs,end-start
+        return reg.get_params(),df_cm,cr,graphs,end-start
     else:
         print(Y[0],"Y")
         scorer = make_scorer(f1_score,pos_label=Y[0])
@@ -90,8 +93,8 @@ def LogReg(X,Y,auto=True,params=None):
         acp = pca.fit_transform(X)
 
         Y_pred=reg.predict(X)
-        cm = confusion_matrix(Y, Y_pred)
-        cr = classification_report(Y, Y_pred)
+        cm = confusion_matrix(Y, Y_pred, labels=label_list)
+        cr = classification_report(Y, Y_pred, target_names=label_list, output_dict=True)
 
         ###Comparison of the best model with the actual classes using PCA
         #fig1, (ax1, ax2) = plt.subplots(1, 2,figsize=(10,5))
@@ -114,9 +117,11 @@ def LogReg(X,Y,auto=True,params=None):
         #ax2.scatter(X[:,0],X[:,1],c=Y_pred,marker='.')
 
         #plt.suptitle("Classification représentée dans l'espace réel")
-        graphs = {'ACP_0': acp[:, 0],'acp_1': acp[:, 1], 'Y': Y, 'Y_pred': Y_pred}
+        graphs = {'ACP_0': acp[:, 0],'ACP_1': acp[:, 1], 'Y': Y, 'Y_pred': Y_pred}
         end = perf_counter()
-        return reg.best_params_,cm,cr,graphs,end-start
+        df_cm = pd.DataFrame(cm, index=label_list,
+                             columns=label_list).transpose()
+        return reg.best_params_,df_cm,cr,graphs,end-start
 
 ###Test
 # import numpy as np

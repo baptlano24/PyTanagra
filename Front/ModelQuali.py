@@ -1,4 +1,5 @@
 from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QMessageBox
 
 from Front.ui_model_quali import Ui_Model_quali
 from PyQt5 import QtWidgets
@@ -105,6 +106,8 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
         """When user click on Ok, all the informations
          All the info is collected and structured in dict (Ex: {SVR: {Auto: False,C: ...}} )
          and sent as a signal."""
+        #TODO CONDITION VALUE => pop fenetre ou IF CONDITION CANCEL
+        #msgBox = QMessageBox.critical(self, "Erreur", "Pas de fichier à ouvrir")
         dict_model = {}
         if self.KNN_use.isChecked():
             dict_model["KNN"] = {}
@@ -119,12 +122,14 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
                     dict_model["KNN"]["leaf_size"] = int(float(self.KNN_leafsize.text()))
                 else:
                     QMessageBox.critical(self, "Erreur de paramètre", "Leaf Size doit être un entier supérieur ou égal à 1.")
+                    return
                 # Verification of the parameter n_neighbors
                 if float(self.KNN_n.text())>=1 and float(self.KNN_n.text())==int(float(self.KNN_n.text())):
                     dict_model["KNN"]["n_neighbors"] = int(float(self.KNN_n.text()))
                 else:
                     QMessageBox.critical(self, "Erreur de paramètre",
                                          "n_neighbors doit être un entier supérieur ou égal à 1.")
+                    return
         if self.LogiR_use.isChecked():
             dict_model["LogiR"] = {}
             if self.LogiR_auto.isChecked():
@@ -133,12 +138,12 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
                 dict_model["LogiR"]["Auto"] = False
                 dict_model["LogiR"]["penalty"] = self.combo_penality.currentText()
                 # Verification of the parameter C
-                if float(self.SVR_c.text())>=0:
+                if float(self.LogiR_C.text())>=0:
                     dict_model["LogiR"]["C"] = float(self.LogiR_C.text())
                 else:
                     QMessageBox.critical(self, "Erreur de paramètre", "C correspond à la pénalisation du modèle choisi. C doit être un réel positif. Si vous souhaitez un modèle non pénalisé, il suffit d'avoir C=0 et de sélection n'importe quelle pénalité.")
+                    return
 
-                dict_model["LogiR"]["C"] = int(self.LogiR_C.text())
 
 
         if self.RT_use.isChecked():
@@ -156,6 +161,7 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
                 else:
                     QMessageBox.critical(self, "Erreur de paramètre",
                                          "Min_Samples_Split est soit un entier supérieur à 2 et dans ce cas, il correspond au nombre minumum nécessaire à la création d'un nœud. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer un nœud.")
+                    return
                 # Verification of the parameter Min_Samples_Leaf
                 if int(float(self.RT_mse.text())) == float(self.RT_mse.text()) and int(float(self.RT_mse.text())) >= 1:
                     dict_model["RT"]["Min_Samples_Leaf"] = int(self.RT_mse.text())
@@ -164,6 +170,7 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
                 else:
                     QMessageBox.critical(self, "Erreur de paramètre",
                                          "Min_Samples_Leaf est soit un entier supérieur à 1 et dans ce cas, il correspond au nombre minumum nécessaire à la création d'une feuille. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer une feuille.")
+                    return
 
         self.close()
         self.trigger_model.emit(dict_model)

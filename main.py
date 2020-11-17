@@ -1,6 +1,6 @@
 import numpy as np
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
-from PyQt5.QtCore import QStringListModel
+from PyQt5.QtCore import QStringListModel, pyqtSignal
 from Back.ML_data import ML_data
 from Back.SVR import SVR_b
 from Back.reg_lin import regression_lin
@@ -12,28 +12,27 @@ from Front.Data_WIndow import Ui_Dialog
 from Front.SelectVar import SelectVar
 from Front.ModelQuant import ModelQua
 from Front.ModelQuali import ModelQualitative
+from Front.ResultQuali import Window
 import pandas as pd
+import seaborn as sn
 import sys
+import matplotlib.pyplot as plt
 from PyQt5 import QtWidgets
 
 
-def data_open():
-    """execute Dia_Window"""
-    dia = Dia_Window()
-    dia.exec_()
-
-
 class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
-    """Dialogue Window which has :
-     - Download data
+    trigger_result = pyqtSignal(list)
+
+    """- Download data
      - ML Data
      - SelectVar()
      - ModelQua()"""
+
     def __init__(self, *args, **kwargs):
         super(Dia_Window, self).__init__(*args, **kwargs)
         # Initializing from ui.file (designer)
         self.setupUi(self)
-        # When "browe" is clicked
+        # When "browse" is clicked
         self.browseButton.clicked.connect(self.browse_1)
         # When "Ok" is clicked
         self.buttonBox.accepted.connect(self.accept_value)
@@ -43,6 +42,7 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
         self.select_var.trigger.connect(lambda x: self.test(x))
         self.model_qua = ModelQua()
         self.model_quali = ModelQualitative()
+        self.result_quali = Window()
         # When the signal of ModelQua() is "emitted"
         self.model_qua.trigger_model.connect(lambda x: self.model_qua_launch(x))
         self.model_quali.trigger_model.connect(lambda x: self.model_qua_launch(x))
@@ -61,6 +61,7 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
 
     def model_qua_launch(self, dict):
         """Launch all model Quantitative from dict signal of ModelQua()"""
+        list_result = []
         if "SVR" in dict:
             SVR = dict["SVR"]
             if SVR["Auto"]:
@@ -79,7 +80,7 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
                 result = regression_lin(self.ml_data.feature, self.ml_data.target, LR["Auto"])
                 print("LR", result)
             else:
-                result = regression_lin(self.ml_data.feature, self.ml_data.target, LR["Auto"], LR["test_size"])
+                result = regression_lin(self.ml_data.feature, self.ml_data.target, LR["Auto"], LR["fit_intercept"], LR["normalize"])
                 print("LR", result)
         if "RT" in dict:
             RT = dict["RT"]
@@ -96,21 +97,48 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
             KNN = dict["KNN"]
             print(KNN)
             if KNN["Auto"]:
-                result = knn_class(self.ml_data.feature, self.ml_data.target,KNN["Auto"])
+                result = knn_class(self.ml_data.feature, self.ml_data.target, KNN["Auto"])
+                model, matrix, dict_cr, graph, time = result
                 print("KNN", result)
+                result_win = Window()
+                result_win.setWindowTitle("KNN Result Auto")
+                result_win.setData(model, matrix, dict_cr, graph, time)
+                list_result.append(result_win)
             else:
-                result = knn_class(self.ml_data.feature, self.ml_data.target, KNN["Auto"], [KNN["leaf_size"],KNN["n_neighbors"],KNN["p"],KNN["metric"]])
-                print("KNN",result)
+                result = knn_class(self.ml_data.feature, self.ml_data.target, KNN["Auto"],
+                                   [KNN["leaf_size"], KNN["n_neighbors"], KNN["p"], KNN["metric"]])
+                print("KNN", result)
+                model, matrix, dict_cr, graph, time = result
+                # sn.set(font_scale=1.4)  # for label size
+                # sn.heatmap(result[1], annot=True, annot_kws={"size": 16})  # font size
+                # plt.show()
+                self.model_quali.close()
+                # self.result_quali.widget.set_data(result[1])
+                result_win = Window()
+                result_win.setWindowTitle("KNN Result")
+                result_win.setData(model, matrix, dict_cr, graph, time)
+                list_result.append(result_win)
         if "LogiR" in dict:
             LogiR = dict["LogiR"]
             if LogiR["Auto"]:
                 result = LogReg(self.ml_data.feature, self.ml_data.target, LogiR["Auto"])
                 print("LogiR", result)
+                model, matrix, dict_cr, graph, time = result
+                result_win = Window()
+                result_win.setWindowTitle("Logistic Regression Result Auto")
+                result_win.setData(model, matrix, dict_cr, graph, time)
+                list_result.append(result_win)
             else:
                 result = LogReg(self.ml_data.feature, self.ml_data.target, LogiR["Auto"], [LogiR['C'],
                                                                                            LogiR['penalty']])
-                print("LogiR",result)
-
+                model, matrix, dict_cr, graph, time = result
+                result_win = Window()
+                result_win.setWindowTitle("Logistic Regression Result")
+                result_win.setData(model, matrix, dict_cr, graph, time)
+                list_result.append(result_win)
+                print("LogiR", result)
+        self.close()
+        self.trigger_result.emit(list_result)
 
     def browse_1(self):
         """Function which browse csv file/Text file/Xlsx file"""
@@ -162,7 +190,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, *args, obj=None, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setupUi(self)
-        self.pushButton.clicked.connect(data_open)
+        self.pushButton.clicked.connect(self.data_open)
+        self.dia = Dia_Window()
+        self.result = None
+        self.dia.trigger_result.connect(lambda x: self.result_launch(x))
+
+    def data_open(self):
+        """execute Dia_Window"""
+        self.dia.exec_()
+
+    def result_launch(self, list_res):
+        self.result = list_res
+        for x in self.result:
+            x.show()
+        del self.dia
+        self.dia = Dia_Window()
 
 
 app = QtWidgets.QApplication(sys.argv)

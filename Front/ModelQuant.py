@@ -23,7 +23,9 @@ class ModelQua(QtWidgets.QDialog, Ui_Model_quanti):
         # LR Widget,
         # Initiation where widgets are disabled
         self.LR_auto.setDisabled(True)
-        self.LR_size.setReadOnly(True)
+        self.combo_intercept.setDisabled(True)
+        self.combo_norm.setDisabled(True)
+
         # RT Widget,
         # Initiation where widgets are disabled
         self.RT_auto.setDisabled(True)
@@ -81,9 +83,9 @@ class ModelQua(QtWidgets.QDialog, Ui_Model_quanti):
             self.LR_auto.setDisabled(False)
             self.LR_size.setReadOnly(False)
         else:
-            self.LR_size.clear()
+            self.combo_intercept.setDisabled(True)
+            self.combo_norm.setDisabled(True)
             self.LR_auto.setDisabled(True)
-            self.LR_size.setDisabled(True)
 
     def svr_use(self):
         """When 'Use ? checkbox is checked => All Hyperparameter and Auto Checkbox is allowed
@@ -119,15 +121,18 @@ class ModelQua(QtWidgets.QDialog, Ui_Model_quanti):
         """When 'Auto' checkbox is checked => All Hyperparameter are disabled and clear
             Else still All Hyperparameter are allowed"""
         if self.LR_auto.isChecked():
-            self.LR_size.clear()
-            self.LR_size.setReadOnly(True)
+            self.combo_intercept.setDisabled(True)
+            self.combo_norm.setDisabled(True)
         else:
-            self.LR_size.setReadOnly(False)
+            self.combo_intercept.setDisabled(False)
+            self.combo_norm.setDisabled(False)
 
     def accept_model(self):
         """When user click on Ok, all the informations
          All the info is collected and structured in dict (Ex: {SVR: {Auto: False,C: ...}} )
          and sent as a signal."""
+        # TODO CONDITION VALUE => pop fenetre ou IF CONDITION CANCEL
+        # msgBox = QMessageBox.critical(self, "Erreur", "Pas de fichier à ouvrir
         dict_model = {}
         if self.LR_use.isChecked():
             dict_model["LR"] = {}
@@ -135,11 +140,9 @@ class ModelQua(QtWidgets.QDialog, Ui_Model_quanti):
                 dict_model["LR"]["Auto"] = True
             else:
                 dict_model["LR"]["Auto"] = False
-                # Verification of the parameter test_size
-                if (float(self.LR_size.text())>=0 and float(self.LR_size.text())<=1):
-                    dict_model["LR"]["test_size"] = float(self.LR_size.text())
-                else:
-                    QMessageBox.critical(self, "Erreur de paramètre", "test_size doit être compris entre 0 et 1!")
+                dict_model["LR"]["fit_intercept"] = (self.combo_intercept.currentText() == "True")
+                dict_model["LR"]["normalize"] = (self.combo_intercept.currentText() == "True")
+
         if self.SVR_use.isChecked():
             dict_model["SVR"] = {}
             if self.SVR_auto.isChecked():

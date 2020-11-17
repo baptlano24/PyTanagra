@@ -16,7 +16,7 @@ def arbre_clas(X, y, Auto, nb_regle = None, profondeur = None, nb_indiv = None):
     #nb_indiv = hyperparamètre correspondant au nombre d'individus minimum pour qu'un sommet soit segmenté
 
     start = time()  # début du chrono
-
+    label_list = list(set(y))
      #Recodage des variables qualitatives
     var_quali = [var for var in X.columns[:] if X[var].dtype == np.object_]
     var_quanti = [var for var in X.columns[:] if X[var].dtype != np.object_]
@@ -73,9 +73,8 @@ def arbre_clas(X, y, Auto, nb_regle = None, profondeur = None, nb_indiv = None):
     pred = arbre.predict(X_test)
 
     # Evaluation
-    report = metrics.classification_report(y_test, pred, output_dict=True)
-    recap = pd.DataFrame(report).transpose()
-    conf = confusion_matrix(y_test, pred) #matrice de confusion
+    report = metrics.classification_report(y_test, pred, target_names=label_list,output_dict=True)
+    conf = confusion_matrix(y_test, pred,labels=label_list) #matrice de confusion
 
     pca = PCA(n_components=2)
     acp = pca.fit_transform(X_test)
@@ -83,8 +82,9 @@ def arbre_clas(X, y, Auto, nb_regle = None, profondeur = None, nb_indiv = None):
 
     done = time()  # fin du chrono
     elapsed = done - start  # temps de calcul
-
-    return arbre.get_params(), conf, report, graphs, elapsed
+    df_cm = pd.DataFrame(conf, index=label_list,
+                         columns=label_list).transpose()
+    return arbre.get_params(), df_cm, report, graphs, elapsed
 
 
 # #Test
