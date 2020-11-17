@@ -66,7 +66,7 @@ def SVR_b(X,Y,auto=True,params=None):
         # plt.legend()
         graphs={'X_1':X_test[:,0],'Y':Y_test,'Y_pred':Y_pred}
         end=perf_counter()
-        return svr.get_params(),svr.score(X_test,Y_test),svr.predict(X_test),graphs,end-start
+        return svr.get_params(),svr.score(X_test,Y_test),graphs,end-start
     else:
 
         scorer = make_scorer(r2_score)
@@ -96,7 +96,7 @@ def SVR_b(X,Y,auto=True,params=None):
 
         graphs = {'X_1': X[:, 0], 'Y': Y, 'Y_pred': Y_pred}
         end = perf_counter()
-        return reg.best_params_,reg.best_score_,reg.predict(X),graphs,end-start
+        return reg.best_params_,reg.best_score_,graphs,end-start
 
 ###Test
 # import numpy as np

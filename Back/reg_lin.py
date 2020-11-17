@@ -54,7 +54,7 @@ def regression_lin(X, y, Auto, intercept = True, normal = False):
     done = time() # fin du chrono
     elapsed = done - start # temps de calcul
 
-    return reg.get_params(), y_pred, mse, graph, elapsed
+    return reg.get_params(), mse, graph, elapsed
 
 # TEST
 # import pandas as pd

@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import GridSearchCV
+from sklearn.decomposition import PCA
 
 
 def knn_class(x, y, auto=True, params=None):
@@ -26,8 +27,16 @@ def knn_class(x, y, auto=True, params=None):
         knn = KNeighborsClassifier()
         clf = GridSearchCV(knn, parameter, cv=3, n_jobs=-1)
         best_model = clf.fit(X_train, Y_train)
+        Y_pred=best_model.predict(X_test)
+
+        cm = confusion_matrix(Y_test, Y_pred)
+        cr = classification_report(Y_test, Y_pred)
+        pca = PCA(n_components=2)
+        acp = pca.fit_transform(X_test)
+        graphs = {'ACP_0': acp[:, 0], 'ACP_1': acp[:, 1], 'Y': Y_test, 'Y_pred': Y_pred}
+
         end = perf_counter()
-        return best_model.best_params_, best_model.best_score_, best_model.predict(X_test), end-start
+        return best_model.best_params_, cm, cr, graphs, end-start
     else:
         [leaf_size, n_neighbors, p, metric] = params
         knn_1 = KNeighborsClassifier(leaf_size=leaf_size, n_neighbors=n_neighbors, p=p, metric=metric, n_jobs=-1)
@@ -35,9 +44,13 @@ def knn_class(x, y, auto=True, params=None):
         y_pred = knn_1.predict(X_test)
         cm = confusion_matrix(Y_test, y_pred)
         cr = classification_report(Y_test, y_pred)
-        end1 = perf_counter()
-        return knn_1.get_params(), cm, cr, y_pred, end1-start
 
+        pca = PCA(n_components=2)
+        acp = pca.fit_transform(X_test)
+        graphs = {'ACP_0': acp[:, 0], 'ACP_1': acp[:, 1], 'Y': Y_test, 'Y_pred': y_pred}
+
+        end1 = perf_counter()
+        return knn_1.get_params(), cm, cr, graphs, end1-start
 
 #df = pd.read_csv('C:/Users/bapti/OneDrive/Bureau/SISE/Machine Learning Python/data_breast_cancer.csv', encoding='latin-1', sep=',')
 #del df['id']

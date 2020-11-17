@@ -70,7 +70,7 @@ def LogReg(X,Y,auto=True,params=None):
         #ax2.scatter(X_test[:,0],X_test[:,1],c=Y_pred,marker='.')
 
         #plt.suptitle("Classification représentée dans l'espace réel")
-        graphs = {'ACP_0': acp[:, 0],'acp_1': acp[:, 1], 'Y': Y, 'Y_pred': Y_pred}
+        graphs = {'ACP_0': acp[:, 0],'ACP_1': acp[:, 1], 'Y': Y, 'Y_pred': Y_pred}
         end = perf_counter()
         return reg.get_params(),cm,cr,graphs,end-start
     else:

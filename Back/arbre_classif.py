@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import make_scorer, f1_score, confusion_matrix
 from sklearn import metrics
 import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
 from time import time
 
 def arbre_clas(X, y, Auto, nb_regle = None, profondeur = None, nb_indiv = None):
@@ -76,15 +77,19 @@ def arbre_clas(X, y, Auto, nb_regle = None, profondeur = None, nb_indiv = None):
     recap = pd.DataFrame(report).transpose()
     conf = confusion_matrix(y_test, pred) #matrice de confusion
 
+    pca = PCA(n_components=2)
+    acp = pca.fit_transform(X_test)
+    graphs = {'ACP_0': acp[:, 0], 'ACP_1': acp[:, 1], 'Y': y_test, 'Y_pred': pred}
+
     done = time()  # fin du chrono
     elapsed = done - start  # temps de calcul
 
-    return arbre.get_params(), conf, report, pred, elapsed
+    return arbre.get_params(), conf, report, graphs, elapsed
 
 
-#Test
-data = pd.read_excel("C:/Users/Axelle/Desktop/M/03_SISE/heart.xlsx", sheet_name = 0)
-x_ = data.iloc[:,:13]
-y_ = pd.DataFrame(data.iloc[:,13])
-print(arbre_clas(x_, y_, True))
-#print(arbre_clas(x_, y_, False, profondeur=2, nb_indiv=30, nb_regle=5))
+# #Test
+# data = pd.read_excel("C:/Users/Axelle/Desktop/M/03_SISE/heart.xlsx", sheet_name = 0)
+# x_ = data.iloc[:,:13]
+# y_ = pd.DataFrame(data.iloc[:,13])
+# print(arbre_clas(x_, y_, True))
+# #print(arbre_clas(x_, y_, False, profondeur=2, nb_indiv=30, nb_regle=5))
