@@ -5,6 +5,8 @@ from math import sqrt
 from time import time
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_squared_error, make_scorer
+import numpy as np
+import pandas as pd
 #import matplotlib.pyplot as plt
 
 def regression_lin(X, y, Auto, intercept = True, normal = False):
@@ -43,7 +45,8 @@ def regression_lin(X, y, Auto, intercept = True, normal = False):
     mse = mean_squared_error(y_test, y_pred)
     # rmse = sqrt(mse)
     # r2 = r2_score(y_test, y_pred)
-    graph = {'X_1': X_train.iloc[:, 0], 'Y': y_train, 'Y_pred': y_pred}
+    np_Xtrain = pd.DataFrame(X_train).to_numpy()
+    graph = {'X_1': np_Xtrain[:, 0], 'Y': y_train, 'Y_pred': y_pred}
 
     # Pour le graphique:
     # import matplotlib.pyplot as plt
@@ -70,6 +73,6 @@ def regression_lin(X, y, Auto, intercept = True, normal = False):
 #
 # y_bis = bike2["cnt"] #ce que l'utilisateur a défini comme var_cible
 # X_bis = bike2.drop("cnt", axis=1)
-
+#
 # print(regression_lin(X_bis, y_bis, True)) #test OK
 # print(regression_lin(X_bis, y_bis, False, True, True)) #test OK
