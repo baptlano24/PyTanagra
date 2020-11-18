@@ -1,11 +1,13 @@
 import numpy as np
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from PyQt5.QtCore import QStringListModel, pyqtSignal
+from Front.ResultQuant import Window_Quant
 from Back.ML_data import ML_data
 from Back.SVR import SVR_b
 from Back.reg_lin import regression_lin
 from Back.TreeReg import RegTree
 from Back.KNN import knn_class
+from Back.arbre_classif import arbre_clas
 from Back.LogReg import LogReg
 from Front.Welcome import Ui_MainWindow
 from Front.Data_WIndow import Ui_Dialog
@@ -67,30 +69,60 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
             if SVR["Auto"]:
                 result = SVR_b(self.ml_data.feature, self.ml_data.target, SVR["Auto"])
                 print("SVR", result)
+                model, score, graph, time = result
+                result_win = Window_Quant()
+                result_win.setWindowTitle("SVT Result Auto")
+                result_win.setData(model, score, graph, time)
+                list_result.append(result_win)
             else:
                 print(self.ml_data.feature)
                 print(self.ml_data.target)
                 result = SVR_b(self.ml_data.feature, self.ml_data.target, SVR["Auto"], [SVR["C"],
                                                                                         SVR["Kernel"],
                                                                                         SVR["Degree"]])
+                model, score, graph, time = result
+                result_win = Window_Quant()
+                result_win.setWindowTitle("SVT Result")
+                result_win.setData(model, score, graph, time)
+                list_result.append(result_win)
                 print("SVR", result)
         if "LR" in dict:
             LR = dict["LR"]
             if LR["Auto"]:
                 result = regression_lin(self.ml_data.feature, self.ml_data.target, LR["Auto"])
                 print("LR", result)
+                model, score, graph, time = result
+                result_win = Window_Quant()
+                result_win.setWindowTitle("Linear Regression Result Auto")
+                result_win.setData(model, score, graph, time)
+                list_result.append(result_win)
             else:
                 result = regression_lin(self.ml_data.feature, self.ml_data.target, LR["Auto"], LR["fit_intercept"], LR["normalize"])
+                model, score, graph, time = result
+                result_win = Window_Quant()
+                result_win.setWindowTitle("Linear Regression Result")
+                result_win.setData(model, score, graph, time)
+                list_result.append(result_win)
                 print("LR", result)
         if "RT" in dict:
             RT = dict["RT"]
             if RT["Auto"]:
                 result = RegTree(self.ml_data.feature, self.ml_data.target, RT["Auto"])
+                model, score, graph, time = result
+                result_win = Window_Quant()
+                result_win.setWindowTitle("Regression Tree Result Auto")
+                result_win.setData(model, score, graph, time)
+                list_result.append(result_win)
                 print("RT", result)
             else:
                 result = RegTree(self.ml_data.feature, self.ml_data.target, RT["Auto"], [RT["Criterion"],
                                                                                          RT["Min_Samples_Split"],
                                                                                          RT["Min_Samples_Leaf"]])
+                model, score, graph, time = result
+                result_win = Window_Quant()
+                result_win.setWindowTitle("Regression Tree Result")
+                result_win.setData(model, score, graph, time)
+                list_result.append(result_win)
                 print("RT", result)
 
         if "KNN" in dict:
@@ -137,6 +169,27 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
                 result_win.setData(model, matrix, dict_cr, graph, time)
                 list_result.append(result_win)
                 print("LogiR", result)
+        if "DTC" in dict:
+            DTC = dict["DTC"]
+            if DTC["Auto"]:
+                result = arbre_clas(self.ml_data.feature, self.ml_data.target, DTC["Auto"])
+                print("result ?")
+                model, matrix, dict_cr, graph, time = result
+                result_win = Window()
+                result_win.setWindowTitle("Tree Decision Classification Auto")
+                result_win.setData(model, matrix, dict_cr, graph, time)
+                list_result.append(result_win)
+
+            else:
+                result = arbre_clas(self.ml_data.feature, self.ml_data.target, DTC["Auto"],DTC["max_leaf_nodes"],DTC["max_depth"],DTC["min_samples_split"])
+                model, matrix, dict_cr, graph, time = result
+                print("result no Auto ?")
+                result_win = Window()
+                result_win.setWindowTitle("Tree Decision Classification")
+                result_win.setData(model, matrix, dict_cr, graph, time)
+                list_result.append(result_win)
+
+
         self.close()
         self.trigger_result.emit(list_result)
 

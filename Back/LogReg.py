@@ -36,9 +36,10 @@ def LogReg(X,Y,auto=True,params=None):
     """
     start=perf_counter()
     label_list = list(set(Y))
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3)
     if not(auto):
         [C,penalty]=list(params)
-        X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.3)
+        #X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.3)
 
         reg=LogisticRegression(solver="saga",penalty=penalty, C=C, n_jobs=-1)
         reg.fit(X_train,Y_train)
@@ -80,7 +81,7 @@ def LogReg(X,Y,auto=True,params=None):
         print(Y[0],"Y")
         scorer = make_scorer(f1_score,pos_label=Y[0])
         modele = LogisticRegression(solver="saga")
-        params = {'C':[0,0.5,1,2,3],'penalty':['l1','l2','elasticnet'],'l1_ratio': 0.5}
+        params = {'C':[0,0.5,1,2,3],'penalty':['l1','l2','elasticnet'],'l1_ratio': [0.5]}
         reg = GridSearchCV(modele, param_grid=params, cv=10, scoring=scorer,n_jobs=-1)
         reg.fit(X,Y)
 

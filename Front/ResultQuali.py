@@ -1,9 +1,6 @@
-from random import random
 
-from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QDialog, QPushButton, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QFormLayout, \
     QMainWindow, QWidget
-import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import seaborn as sn
@@ -36,8 +33,6 @@ class Window(QMainWindow):
         pca_score = QLabel('PCA graph', self)
         score = QLabel('Score Table', self)
 
-        # Just some button connected to `plot` method
-        # set the layout
         wid = QWidget(self)
         self.setCentralWidget(wid)
         layout = QVBoxLayout()
@@ -69,8 +64,6 @@ class Window(QMainWindow):
         self.table_model.setHorizontalHeaderLabels(list(self.info_model.keys()))
         for column, key in enumerate(self.info_model):
             new_item = QTableWidgetItem(str(self.info_model[key]))
-            print(self.info_model[key])
-            print(column)
             self.table_model.setItem(0, column, new_item)
 
     def setData(self, model, matrix, dict_cr, graph, time):
@@ -87,6 +80,7 @@ class Window(QMainWindow):
 
     def plot(self):
         ''' plot some random stuff '''
+        # TODO CHANGE COLORATION
 
         # instead of ax.hold(False)
         self.figure.clear()
@@ -103,7 +97,7 @@ class Window(QMainWindow):
         self.canvas.draw()
 
     def plot_pca(self):
-        #TODO FAIRE LEGENDE
+        #TODO FAIRE LEGENDE + CHANGE COLORATION
         le = preprocessing.LabelEncoder()
         le.fit(self.pca["Y"])
         Y_encode = le.transform(self.pca["Y"])

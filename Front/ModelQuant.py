@@ -81,7 +81,8 @@ class ModelQua(QtWidgets.QDialog, Ui_Model_quanti):
 
         if self.LR_use.isChecked():
             self.LR_auto.setDisabled(False)
-            self.LR_size.setReadOnly(False)
+            self.combo_intercept.setDisabled(False)
+            self.combo_norm.setDisabled(False)
         else:
             self.combo_intercept.setDisabled(True)
             self.combo_norm.setDisabled(True)
@@ -93,7 +94,7 @@ class ModelQua(QtWidgets.QDialog, Ui_Model_quanti):
         if self.SVR_use.isChecked():
             self.SVR_c.setReadOnly(False)
             self.SVR_auto.setDisabled(False)
-            self.SVR_degree.setDisabled(False)
+            self.SVR_degree.setReadOnly(False)
             self.combo_kernel.setDisabled(False)
         else:
             self.SVR_degree.clear()
@@ -157,6 +158,8 @@ class ModelQua(QtWidgets.QDialog, Ui_Model_quanti):
                     QMessageBox.critical(self, "Erreur de paramètre", "C correspond à la pénalisation L2 du modèle. C doit être un réel positif. Si vous souhaitez un modèle non pénalisé, il suffit d'avoir C=0.")
                 if self.combo_kernel.currentText()=='poly':
                     dict_model["SVR"]["Degree"] = int(self.SVR_degree.text())
+                else:
+                    dict_model["SVR"]["Degree"] = None
         if self.RT_use.isChecked():
             dict_model["RT"] = {}
             if self.RT_auto.isChecked():

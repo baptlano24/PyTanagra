@@ -46,7 +46,8 @@ def regression_lin(X, y, Auto, intercept = True, normal = False):
     # rmse = sqrt(mse)
     # r2 = r2_score(y_test, y_pred)
     np_Xtrain = pd.DataFrame(X_train).to_numpy()
-    graph = {'X_1': np_Xtrain[:, 0], 'Y': y_train, 'Y_pred': y_pred}
+
+    graph = {'X_1': X_test[:,0], 'Y': y_test, 'Y_pred': y_pred}
 
     # Pour le graphique:
     # import matplotlib.pyplot as plt

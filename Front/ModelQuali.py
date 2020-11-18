@@ -19,6 +19,8 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
         self.LogiR_C.setReadOnly(True)
         self.LogiR_auto.setDisabled(True)
         self.combo_penality.setDisabled(True)
+        self.LogiR_use.toggled.connect(self.log_use)
+        self.LogiR_auto.toggled.connect(self.log_auto)
         # Tree Widget,
         # Initiation where widgets are disabled
         # KNN Widget,
@@ -28,23 +30,58 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
         self.KNN_leafsize.setReadOnly(True)
         self.combo_metric.setDisabled(True)
         self.combo_p.setDisabled(True)
-        # When CheckBox of LogiR_C is toggled
-        self.LogiR_use.toggled.connect(self.log_use)
-        self.LogiR_auto.toggled.connect(self.log_auto)
+        # Tree Widget,
+        # Initiation where widgets are disabled
+        self.DTC_mss.setReadOnly(True)
+        self.DTC_maxd.setReadOnly(True)
+        self.DTC_maxleafN.setReadOnly(True)
+        # When CheckBox of DTC is toggled
+        self.DTC_use.toggled.connect(self.dtc_use)
+        self.DTC_auto.toggled.connect(self.dtc_auto)
         # When CheckBox of KNN  is toggled
         self.KNN_use.toggled.connect(self.knn_use)
         self.KNN_auto.toggled.connect(self.knn_auto)
-        # When CheckBox of LR is toggled
-        #self.LR_use.toggled.connect(self.lr_use)
-        #self.LR_auto.toggled.connect(self.lr_auto)
         # When the Users clicked on the button "Ok"
         self.buttonBox.accepted.connect(self.accept_model)
+
+    def dtc_use(self):
+        """When 'Use ? checkbox is checked => All Hyperparameter and Auto Checkbox is allowed
+        Else still disabled adn we clear the line edits"""
+        if self.DTC_use.isChecked():
+            self.DTC_auto.setDisabled(False)
+            self.DTC_mss.setReadOnly(False)
+            self.DTC_maxd.setReadOnly(False)
+            self.DTC_maxleafN.setReadOnly(False)
+        else:
+            self.DTC_mss.setReadOnly(True)
+            self.DTC_maxd.setReadOnly(True)
+            self.DTC_maxleafN.setReadOnly(True)
+            self.DTC_maxleafN.clear()
+            self.DTC_maxd.clear()
+            self.DTC_mss.clear()
+            self.DTC_auto.setDisabled(True)
+
+    def dtc_auto(self):
+        """When 'Auto' checkbox is checked => All Hyperparameter are disabled and clear
+             Else still All Hyperparameter are allowed"""
+        if self.DTC_auto.isChecked():
+            self.DTC_mss.setReadOnly(True)
+            self.DTC_maxd.setReadOnly(True)
+            self.DTC_maxleafN.setReadOnly(True)
+            self.DTC_maxleafN.clear()
+            self.DTC_maxd.clear()
+            self.DTC_mss.clear()
+        else:
+            self.DTC_mss.setReadOnly(False)
+            self.DTC_maxd.setReadOnly(False)
+            self.DTC_maxleafN.setReadOnly(False)
+
 
     def log_use(self):
         """When 'Use ? checkbox is checked => All Hyperparameter and Auto Checkbox is allowed
          Else still disabled adn we clear the line edits"""
-
         if self.LogiR_use.isChecked():
+            print("FDP REAGI")
             self.LogiR_auto.setDisabled(False)
             self.LogiR_C.setReadOnly(False)
             self.combo_penality.setDisabled(False)
@@ -63,6 +100,7 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
             self.LogiR_C.setReadOnly(True)
             self.combo_penality.setDisabled(True)
         else:
+            self.LogiR_C.clear()
             self.LogiR_C.setReadOnly(False)
             self.combo_penality.setDisabled(False)
 
@@ -143,34 +181,16 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
                 else:
                     QMessageBox.critical(self, "Erreur de paramètre", "C correspond à la pénalisation du modèle choisi. C doit être un réel positif. Si vous souhaitez un modèle non pénalisé, il suffit d'avoir C=0 et de sélection n'importe quelle pénalité.")
                     return
-
-
-
-        if self.RT_use.isChecked():
-            dict_model["RT"] = {}
-            if self.RT_auto.isChecked():
-                dict_model["RT"]["Auto"] = True
+        if self.DTC_use.isChecked():
+            dict_model["DTC"] = {}
+            if self.DTC_auto.isChecked():
+                dict_model["DTC"]["Auto"] = True
             else:
-                dict_model["RT"]["Auto"] = False
-                dict_model["RT"]["Criterion"] = self.combo_criterion.currentText()
-                # Verification of the parameter Min_Samples_Split
-                if int(float(self.RT_mss.text())) == float(self.RT_mss.text()) and int(float(self.RT_mss.text())) >= 2:
-                    dict_model["RT"]["Min_Samples_Split"] = int(self.RT_mss.text())
-                elif float(self.RT_mss.text()) <= 1 and float(self.RT_mss.text()) > 0:
-                    dict_model["RT"]["Min_Samples_Split"] = float(self.RT_mss.text())
-                else:
-                    QMessageBox.critical(self, "Erreur de paramètre",
-                                         "Min_Samples_Split est soit un entier supérieur à 2 et dans ce cas, il correspond au nombre minumum nécessaire à la création d'un nœud. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer un nœud.")
-                    return
-                # Verification of the parameter Min_Samples_Leaf
-                if int(float(self.RT_mse.text())) == float(self.RT_mse.text()) and int(float(self.RT_mse.text())) >= 1:
-                    dict_model["RT"]["Min_Samples_Leaf"] = int(self.RT_mse.text())
-                elif float(self.RT_mse.text()) <= 1 and float(self.RT_mse.text()) > 0:
-                    dict_model["RT"]["Min_Samples_Leaf"] = float(self.RT_mse.text())
-                else:
-                    QMessageBox.critical(self, "Erreur de paramètre",
-                                         "Min_Samples_Leaf est soit un entier supérieur à 1 et dans ce cas, il correspond au nombre minumum nécessaire à la création d'une feuille. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer une feuille.")
-                    return
+                dict_model["DTC"]["Auto"] = False
+                dict_model["DTC"]["max_leaf_nodes"] = int(self.DTC_maxleafN.text())
+                dict_model["DTC"]["max_depth"] = int(self.DTC_maxd.text())
+                dict_model["DTC"]["min_samples_split"] = int(self.DTC_mss.text())
+
 
         self.close()
         self.trigger_model.emit(dict_model)
