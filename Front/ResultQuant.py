@@ -62,6 +62,7 @@ class Window_Quant(QMainWindow):
         ax1.scatter(self.data["X_1"], self.data["Y"],marker='o',c='b',label='Raw data')
         ax1.plot(self.data["X_1"], self.data["Y_pred"],'r-',label='Prediction')
         ax1.set_xlabel('X_1',fontsize=10)
+        plt.setp(ax1.get_xticklabels(), fontsize=10)
         ax1.legend()
 
         min_Y=min(self.data["Y"])
@@ -71,3 +72,5 @@ class Window_Quant(QMainWindow):
         ax2.scatter(self.data["Y"], self.data["Y_pred"],marker='.',c='b')
         ax2.set_xlabel('Y',fontsize=10)
         ax2.set_ylabel('Y_pred',fontsize=10)
+        plt.setp(ax2.get_xticklabels(), fontsize=10)
+        plt.setp(ax2.get_yticklabels(), fontsize=10)

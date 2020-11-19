@@ -124,11 +124,16 @@ class Window(QMainWindow):
         ax1.scatter(self.pca["ACP_0"], self.pca["ACP_1"], c=Y_encode)
         ax1.set_xlabel("First axis of the PCA",fontsize=10)
         ax1.set_ylabel("Second axis of the PCA",fontsize=10)
+        plt.setp(ax1.get_xticklabels(), fontsize=10)
+        plt.setp(ax1.get_yticklabels(), fontsize=10)
         ax1.legend(handles=list_leg)
 
         ax2.set_title("Predicted Classification", fontsize=15)
         ax2.scatter(self.pca["ACP_0"], self.pca["ACP_1"], c=Y1_encode)
         ax2.set_xlabel("First axis of the PCA",fontsize=10)
         ax2.set_ylabel("Second axis of the PCA",fontsize=10)
+        plt.setp(ax2.get_xticklabels(), fontsize=10)
+        plt.setp(ax2.get_yticklabels(), fontsize=10)
+
         ax2.legend(handles=list_leg)
 
