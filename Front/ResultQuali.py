@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import seaborn as sn
 from sklearn import preprocessing
+import matplotlib.lines as mlines
+
 
 class Window(QMainWindow):
     def __init__(self, parent=None, data=None, dict=None):
@@ -80,7 +82,6 @@ class Window(QMainWindow):
 
     def plot(self):
         ''' plot some random stuff '''
-        # TODO CHANGE COLORATION
 
         # instead of ax.hold(False)
         self.figure.clear()
@@ -91,21 +92,43 @@ class Window(QMainWindow):
         # discards the old graph
         # ax.hold(False) # deprecated, see above
         sn.set(font_scale=1.4)  # for label size
-        sn.heatmap(self.data, annot=True, annot_kws={"size": 10}, ax=ax)  # font size
+        sn.heatmap(self.data, annot=True, annot_kws={"size": 10}, ax=ax,cmap=plt.cm.Blues,cbar_kws={'label': 'Number of elements'})
+        ax.figure.axes[-1].yaxis.label.set_size(10)
         # plot data
         # ax.plot(data, '*-')
         self.canvas.draw()
 
     def plot_pca(self):
-        #TODO FAIRE LEGENDE + CHANGE COLORATION
+        new_colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728',
+                      '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
+                      '#bcbd22', '#17becf']
+
         le = preprocessing.LabelEncoder()
         le.fit(self.pca["Y"])
-        Y_encode = le.transform(self.pca["Y"])
-        Y1_encode = le.transform(self.pca["Y_pred"])
+        Y_encode = [new_colors[e%10] for e in le.transform(self.pca["Y"])]
+        Y1_encode = [new_colors[e%10] for e in le.transform(self.pca["Y_pred"])]
+
+        #Creation of the legend
+        unique_lab = list(set(self.pca["Y"]))
+        unique_num= list(set(le.transform(self.pca["Y"])))
+        print(unique_lab,unique_num)
+        unique_color = [new_colors[e % 10] for e in unique_num]
+        list_leg=[]
+        for i in range(len(unique_lab)):
+            list_leg.append(mlines.Line2D([], [], color=unique_color[i], marker='o', ls='', label=unique_lab[i]))
+
         self.figure_pca.clear()
         ax = (ax1, ax2) = self.figure_pca.subplots(1, 2)
-        ax2.set_title("Predicted Classification", fontsize=10)
-        ax1.set_title("Real Classification",fontsize=10)
-        y = ax1.scatter(self.pca["ACP_0"], self.pca["ACP_1"], c=Y_encode)
-        y1 = ax2.scatter(self.pca["ACP_0"], self.pca["ACP_1"], c=Y1_encode)
+
+        ax1.set_title("Real Classification",fontsize=15)
+        ax1.scatter(self.pca["ACP_0"], self.pca["ACP_1"], c=Y_encode)
+        ax1.set_xlabel("First axis of the PCA",fontsize=10)
+        ax1.set_ylabel("Second axis of the PCA",fontsize=10)
+        ax1.legend(handles=list_leg)
+
+        ax2.set_title("Predicted Classification", fontsize=15)
+        ax2.scatter(self.pca["ACP_0"], self.pca["ACP_1"], c=Y1_encode)
+        ax2.set_xlabel("First axis of the PCA",fontsize=10)
+        ax2.set_ylabel("Second axis of the PCA",fontsize=10)
+        ax2.legend(handles=list_leg)
 

@@ -71,7 +71,7 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
                 print("SVR", result)
                 model, score, graph, time = result
                 result_win = Window_Quant()
-                result_win.setWindowTitle("SVT Result Auto")
+                result_win.setWindowTitle("SVR Result Auto")
                 result_win.setData(model, score, graph, time)
                 list_result.append(result_win)
             else:
@@ -82,7 +82,7 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
                                                                                         SVR["Degree"]])
                 model, score, graph, time = result
                 result_win = Window_Quant()
-                result_win.setWindowTitle("SVT Result")
+                result_win.setWindowTitle("SVR Result")
                 result_win.setData(model, score, graph, time)
                 list_result.append(result_win)
                 print("SVR", result)

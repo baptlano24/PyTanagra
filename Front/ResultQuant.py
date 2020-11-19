@@ -54,13 +54,20 @@ class Window_Quant(QMainWindow):
         self.plot()
 
     def plot(self):
-        # TODO FAIRE LEGENDE + CHANGE COLORATION
         le = preprocessing.LabelEncoder()
         self.figure.clear()
         ax = (ax1, ax2) = self.figure.subplots(1, 2)
-        ax2.set_title("Predicted Classification", fontsize=10)
-        ax1.set_title("Real Classification", fontsize=10)
-        print(len(self.data["X_1"]), len(self.data["Y"]))
-        print(len(self.data["X_1"]), len(self.data["Y_pred"]))
-        y = ax1.scatter(self.data["X_1"], self.data["Y"])
-        y1 = ax2.scatter(self.data["X_1"], self.data["Y_pred"])
+
+        ax1.set_title("Regression", fontsize=15)
+        ax1.scatter(self.data["X_1"], self.data["Y"],marker='o',c='b',label='Raw data')
+        ax1.plot(self.data["X_1"], self.data["Y_pred"],'r-',label='Prediction')
+        ax1.set_xlabel('X_1',fontsize=10)
+        ax1.legend()
+
+        min_Y=min(self.data["Y"])
+        max_Y=max(self.data["Y"])
+        ax2.set_title("Y_pred vs. Y", fontsize=15)
+        ax2.plot([min_Y,max_Y],[min_Y,max_Y],ls='-',c='r')
+        ax2.scatter(self.data["Y"], self.data["Y_pred"],marker='.',c='b')
+        ax2.set_xlabel('Y',fontsize=10)
+        ax2.set_ylabel('Y_pred',fontsize=10)
