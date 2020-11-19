@@ -238,6 +238,10 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
             QMessageBox.critical(self, "Erreur", "Erreur")
         self.select_var.exec_()
 
+    def clean(self):
+        for x in self.findChildren(QtWidgets.QLineEdit):
+            x.clear()
+
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, *args, obj=None, **kwargs):
@@ -250,14 +254,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def data_open(self):
         """execute Dia_Window"""
+
+        self.dia.clean()
         self.dia.exec_()
 
     def result_launch(self, list_res):
+        self.result = None
         self.result = list_res
         for x in self.result:
             x.show()
-        del self.dia
-        self.dia = Dia_Window()
 
 
 app = QtWidgets.QApplication(sys.argv)

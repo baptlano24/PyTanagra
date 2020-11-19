@@ -1,5 +1,5 @@
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QLineEdit, QCheckBox
 
 from Front.ui_model_quali import Ui_Model_quali
 from PyQt5 import QtWidgets
@@ -231,6 +231,10 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
                     QMessageBox.critical(self, "Erreur de paramètre",
                                          "min_samples_split est soit un entier supérieur à 2 et dans ce cas, il correspond au nombre minumum nécessaire à la création d'un nœud. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer un nœud. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer un nœud.")
 
+        for x in self.findChildren(QLineEdit):
+            x.clear()
+        for x in self.findChildren(QCheckBox):
+            x.setChecked(False)
         self.close()
         self.trigger_model.emit(dict_model)
 
