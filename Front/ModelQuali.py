@@ -1,5 +1,5 @@
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QLineEdit, QCheckBox
 
 from Front.ui_model_quali import Ui_Model_quali
 from PyQt5 import QtWidgets
@@ -191,7 +191,10 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
                 dict_model["DTC"]["max_depth"] = int(self.DTC_maxd.text())
                 dict_model["DTC"]["min_samples_split"] = int(self.DTC_mss.text())
 
-
+        for x in self.findChildren(QLineEdit):
+            x.clear()
+        for x in self.findChildren(QCheckBox):
+            x.setChecked(False)
         self.close()
         self.trigger_model.emit(dict_model)
 

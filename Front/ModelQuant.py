@@ -2,7 +2,7 @@ from PyQt5.QtCore import pyqtSignal
 
 from Front.ui_model_quant import Ui_Model_quanti
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QFileDialog, QMessageBox, QLineEdit, QCheckBox
 
 
 class ModelQua(QtWidgets.QDialog, Ui_Model_quanti):
@@ -182,4 +182,8 @@ class ModelQua(QtWidgets.QDialog, Ui_Model_quanti):
                 else:
                     QMessageBox.critical(self, "Erreur de paramètre","Min_Samples_Leaf est soit un entier supérieur à 1 et dans ce cas, il correspond au nombre minumum nécessaire à la création d'une feuille. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer une feuille.")
         self.close()
+        for x in self.findChildren(QLineEdit):
+            x.clear()
+        for x in self.findChildren(QCheckBox):
+            x.setChecked(False)
         self.trigger_model.emit(dict_model)

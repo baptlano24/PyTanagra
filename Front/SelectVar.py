@@ -56,5 +56,7 @@ class SelectVar(QtWidgets.QDialog, Ui_Dialog):
         from target and features as Signal"""
         tar_name = self.Target.model().stringList()
         fea_name = self.Features.model().stringList()
+        self.Target.setModel(QStringListModel())
+        self.Features.setModel(QStringListModel())
         self.close()
         self.trigger.emit([tar_name, fea_name])
