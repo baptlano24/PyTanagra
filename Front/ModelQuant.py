@@ -132,8 +132,6 @@ class ModelQua(QtWidgets.QDialog, Ui_Model_quanti):
         """When user click on Ok, all the informations
          All the info is collected and structured in dict (Ex: {SVR: {Auto: False,C: ...}} )
          and sent as a signal."""
-        # TODO CONDITION VALUE => pop fenetre ou IF CONDITION CANCEL
-        # msgBox = QMessageBox.critical(self, "Erreur", "Pas de fichier à ouvrir
         dict_model = {}
         if self.LR_use.isChecked():
             dict_model["LR"] = {}
@@ -151,12 +149,18 @@ class ModelQua(QtWidgets.QDialog, Ui_Model_quanti):
             else:
                 dict_model["SVR"]["Auto"] = False
                 dict_model["SVR"]["Kernel"] = self.combo_kernel.currentText()
+
                 # Verification of the parameter C
-                if float(self.SVR_c.text())>=0:
+                if self.SVR_c.text() == '':
+                    QMessageBox.critical(self, "Erreur de paramètre",
+                                         "C est vide.\nC correspond à la pénalisation L2 du modèle. C doit être un réel positif. Si vous souhaitez un modèle non pénalisé, il suffit d'avoir C=0.")
+                elif float(self.SVR_c.text()) >= 0:
                     dict_model["SVR"]["C"] = float(self.SVR_c.text())
                 else:
-                    QMessageBox.critical(self, "Erreur de paramètre", "C correspond à la pénalisation L2 du modèle. C doit être un réel positif. Si vous souhaitez un modèle non pénalisé, il suffit d'avoir C=0.")
-                if self.combo_kernel.currentText()=='poly':
+                    QMessageBox.critical(self, "Erreur de paramètre",
+                                         "C correspond à la pénalisation L2 du modèle. C doit être un réel positif. Si vous souhaitez un modèle non pénalisé, il suffit d'avoir C=0.")
+
+                if self.combo_kernel.currentText() == 'poly':
                     dict_model["SVR"]["Degree"] = int(self.SVR_degree.text())
                 else:
                     dict_model["SVR"]["Degree"] = None
@@ -167,19 +171,30 @@ class ModelQua(QtWidgets.QDialog, Ui_Model_quanti):
             else:
                 dict_model["RT"]["Auto"] = False
                 dict_model["RT"]["Criterion"] = self.combo_criterion.currentText()
+
                 # Verification of the parameter Min_Samples_Split
-                if int(float(self.RT_mss.text())) == float(self.RT_mss.text()) and int(float(self.RT_mss.text()))>=2:
+                if self.RT_mss.text() == '':
+                    QMessageBox.critical(self, "Erreur de paramètre",
+                                         "Min_Samples_Split est vide.\nMin_Samples_Split est soit un entier supérieur à 2 et dans ce cas, il correspond au nombre minumum nécessaire à la création d'un nœud. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer un nœud.")
+                elif int(float(self.RT_mss.text())) == float(self.RT_mss.text()) and int(
+                        float(self.RT_mss.text())) >= 2:
                     dict_model["RT"]["Min_Samples_Split"] = int(self.RT_mss.text())
-                elif float(self.RT_mss.text())<=1 and float(self.RT_mss.text())>0:
+                elif float(self.RT_mss.text()) <= 1 and float(self.RT_mss.text()) > 0:
                     dict_model["RT"]["Min_Samples_Split"] = float(self.RT_mss.text())
                 else:
-                    QMessageBox.critical(self, "Erreur de paramètre", "Min_Samples_Split est soit un entier supérieur à 2 et dans ce cas, il correspond au nombre minumum nécessaire à la création d'un nœud. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer un nœud.")
-                #Verification of the parameter Min_Samples_Leaf
-                if int(float(self.RT_mse.text()))==float(self.RT_mse.text()) and int(float(self.RT_mse.text()))>=1:
+                    QMessageBox.critical(self, "Erreur de paramètre",
+                                         "Min_Samples_Split est soit un entier supérieur à 2 et dans ce cas, il correspond au nombre minumum nécessaire à la création d'un nœud. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer un nœud.")
+
+                # Verification of the parameter Min_Samples_Leaf
+                if self.RT_mse.text() == '':
+                    QMessageBox.critical(self, "Erreur de paramètre",
+                                         "Min_Samples_Leaf est vide.\nMin_Samples_Leaf est soit un entier supérieur à 1 et dans ce cas, il correspond au nombre minumum nécessaire à la création d'une feuille. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer une feuille.")
+                if int(float(self.RT_mse.text())) == float(self.RT_mse.text()) and int(float(self.RT_mse.text())) >= 1:
                     dict_model["RT"]["Min_Samples_Leaf"] = int(self.RT_mse.text())
-                elif float(self.RT_mse.text())<=1 and float(self.RT_mse.text())>0:
+                elif float(self.RT_mse.text()) <= 1 and float(self.RT_mse.text()) > 0:
                     dict_model["RT"]["Min_Samples_Leaf"] = float(self.RT_mse.text())
                 else:
-                    QMessageBox.critical(self, "Erreur de paramètre","Min_Samples_Leaf est soit un entier supérieur à 1 et dans ce cas, il correspond au nombre minumum nécessaire à la création d'une feuille. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer une feuille.")
+                    QMessageBox.critical(self, "Erreur de paramètre",
+                                         "Min_Samples_Leaf est soit un entier supérieur à 1 et dans ce cas, il correspond au nombre minumum nécessaire à la création d'une feuille. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer une feuille.")
         self.close()
         self.trigger_model.emit(dict_model)
