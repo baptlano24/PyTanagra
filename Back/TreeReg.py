@@ -6,11 +6,7 @@ Created on Sun Nov  8 09:52:48 2020
 """
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.tree import DecisionTreeRegressor
-import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, make_scorer
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.decomposition import PCA
 from time import perf_counter
 
 

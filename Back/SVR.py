@@ -7,7 +7,7 @@ Created on Mon Nov  2 13:47:38 2020
 
 from sklearn.svm import SVR
 from sklearn.model_selection import GridSearchCV, train_test_split
-from sklearn.metrics import r2_score, make_scorer
+from sklearn.metrics import mean_squared_error, make_scorer
 import pandas as pd
 import matplotlib.pyplot as plt
 from time import perf_counter
@@ -66,10 +66,10 @@ def SVR_b(X,Y,auto=True,params=None):
         # plt.legend()
         graphs={'X_1':X_test[:,0],'Y':Y_test,'Y_pred':Y_pred}
         end=perf_counter()
-        return svr.get_params(),svr.score(X_test,Y_test),graphs,end-start
+        return svr.get_params(),mean_squared_error(Y_test,Y_pred),graphs,end-start
     else:
 
-        scorer = make_scorer(r2_score)
+        scorer = make_scorer(mean_squared_error)
         svr = SVR()
         params = {'C':[1,2,3],'kernel':['linear','poly','rbf'],'degree':[2,3]}
         reg = GridSearchCV(svr, param_grid=params, cv=10, scoring=scorer)
