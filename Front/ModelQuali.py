@@ -153,9 +153,11 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
                 dict_model["KNN"]["Auto"] = False
                 dict_model["KNN"]["p"] = self.combo_p.currentText()
                 dict_model["KNN"]["metric"] = self.combo_metric.currentText()
+
                 # Verification of the parameter leaf size
                 if self.KNN_leafsize.text()=='':
                     QMessageBox.critical(self, "Erreur de paramètre","Leaf Size est vide. Leaf Size doit être un entier supérieur ou égal à 1.")
+                    return
                 elif float(self.KNN_leafsize.text())>=1 and int(float(self.KNN_leafsize.text()))==float(self.KNN_leafsize.text()):
                     dict_model["KNN"]["leaf_size"] = int(float(self.KNN_leafsize.text()))
                 else:
@@ -165,6 +167,7 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
                 if self.KNN_n.text()=='':
                     QMessageBox.critical(self, "Erreur de paramètre",
                                          "n_neighbors est vide. n_neighbors doit être un entier supérieur ou égal à 1.")
+                    return
                 elif float(self.KNN_n.text())>=1 and float(self.KNN_n.text())==int(float(self.KNN_n.text())):
                     dict_model["KNN"]["n_neighbors"] = int(float(self.KNN_n.text()))
                 else:
@@ -178,11 +181,12 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
             else:
                 dict_model["LogiR"]["Auto"] = False
                 dict_model["LogiR"]["penalty"] = self.combo_penality.currentText()
+
                 # Verification of the parameter C
                 if self.LogiR_C.text()=='':
                     QMessageBox.critical(self, "Erreur de paramètre",
                                          "C est vide.\nC correspond à la pénalisation du modèle choisi. C doit être un réel positif. Si vous souhaitez un modèle non pénalisé, il suffit d'avoir C=0 et de sélection n'importe quelle pénalité.")
-
+                    return
                 elif float(self.LogiR_C.text())>=0:
                     dict_model["LogiR"]["C"] = float(self.LogiR_C.text())
                 else:
@@ -199,17 +203,20 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
                 if self.DTC_maxleafN.text()=='':
                     QMessageBox.critical(self, "Erreur de paramètre",
                                          "max_leaf_nodes est vide.\nmax_leaf_nodes correspond au nombre maximal de nœuds dans l'arbre. C'est un entier supérieur ou égal à 1 ou bien il prend la valeur None si vous ne souhaitez pas de limite.")
+                    return
                 elif self.DTC_maxleafN.text()=='None':
                     dict_model["DTC"]["max_leaf_nodes"]=None
                 elif int(float(self.DTC_maxleafN.text()))==float(self.DTC_maxleafN.text()) and int(float(self.DTC_maxleafN.text()))>=1:
                     dict_model["DTC"]["max_leaf_nodes"] = int(float(self.DTC_maxleafN.text()))
-                else :
+                else:
                     QMessageBox.critical(self, "max_leaf_nodes correspond au nombre maximal de nœuds dans l'arbre. C'est un entier supérieur ou égal à 1 ou bien il prend la valeur None si vous ne souhaitez pas de limite.")
+                    return
 
                 # Verification of the parameter Max Dept
                 if self.DTC_maxd.text()=='':
                     QMessageBox.critical(self,"Erreur de paramètre",
                                          "max_depth est vide.\nmax_depth correspond au nombre maximal de niveaux de nœuds dans l'arbre. C'est un entier supérieur ou égal à 1 ou bien il prend la valeur None si vous ne souhaitez pas de limite.")
+                    return
                 elif self.DTC_maxd.text()=='None':
                     dict_model["DTC"]["max_depth"] = None
                 elif int(float(self.DTC_maxd.text()))==float(self.DTC_maxd.text()) and int(float(self.DTC_maxd.text()))>=1:
@@ -217,10 +224,13 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
                 else:
                     QMessageBox.critical(self,
                                          "max_depth correspond au nombre maximal de niveaux de nœuds dans l'arbre. C'est un entier supérieur ou égal à 1 ou bien il prend la valeur None si vous ne souhaitez pas de limite.")
+                    return
+
                 # Verification of the parameter Min Sample Split
                 if self.DTC_mss.text()=='':
                     QMessageBox.critical(self, "Erreur de paramètre",
                                          "min_samples_split est vide.\nmin_samples_split est soit un entier supérieur à 2 et dans ce cas, il correspond au nombre minumum nécessaire à la création d'un nœud. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer un nœud. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer un nœud.")
+                    return
                 elif self.DTC_mss.text()=='None':
                     dict_model["DTC"]["min_samples_split"] = None
                 elif int(float(self.DTC_mss.text()))==float(self.DTC_mss.text()) and int(float(self.DTC_mss.text()))>=1:
@@ -230,7 +240,7 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
                 else:
                     QMessageBox.critical(self, "Erreur de paramètre",
                                          "min_samples_split est soit un entier supérieur à 2 et dans ce cas, il correspond au nombre minumum nécessaire à la création d'un nœud. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer un nœud. Soit un réel entre 0 et 1 qui correspond à une fraction minimum du nombre d'observations qu'il faut pour pouvoir créer un nœud.")
-
+                    return
         for x in self.findChildren(QLineEdit):
             x.clear()
         for x in self.findChildren(QCheckBox):
