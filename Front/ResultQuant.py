@@ -60,7 +60,10 @@ class Window_Quant(QMainWindow):
 
         ax1.set_title("Regression", fontsize=15)
         ax1.scatter(self.data["X_1"], self.data["Y"],marker='o',c='b',label='Raw data')
-        ax1.plot(self.data["X_1"], self.data["Y_pred"],'r-',label='Prediction')
+        if self.data["X_1"]==sort(self.data["X_1"]):
+            ax1.plot(self.data["X_1"], self.data["Y_pred"],'r-',label='Prediction')
+        else:
+            ax1.scatter(self.data["X_1"], self.data["Y_pred"], marker='.', c='r', label='Prediction')
         ax1.set_xlabel('X_1',fontsize=10)
         plt.setp(ax1.get_xticklabels(), fontsize=10)
         ax1.legend()
