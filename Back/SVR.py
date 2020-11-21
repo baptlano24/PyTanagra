@@ -8,8 +8,6 @@ Created on Mon Nov  2 13:47:38 2020
 from sklearn.svm import SVR
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.metrics import mean_squared_error, make_scorer
-import pandas as pd
-import matplotlib.pyplot as plt
 from time import perf_counter
 
 def SVR_b(X,Y,auto=True,params=None):
@@ -43,27 +41,13 @@ def SVR_b(X,Y,auto=True,params=None):
             [C,k,deg]=params
         if k=='linear':
             svr = SVR(kernel=k,C=C)
-            #n_jobs = -1
         else:
             svr = SVR(kernel=k,degree=deg,C=C,n_jobs=-1)
         X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.3)
         svr.fit(X_train,Y_train)
 
-        #print(svr.get_params())
-        #print(svr.score(X_test,Y_test))
-
         Y_pred=svr.predict(X_test)
 
-        # fig1=plt.figure()
-        # plt.scatter(Y_test,Y_pred,marker='.')
-        # plt.xlabel('y')
-        # plt.ylabel('Y_pred')
-        #
-        # fig2=plt.figure()
-        # plt.scatter(X_test[:,0],Y_pred,marker='.',c='r',label='Y_pred')
-        # plt.scatter(X_test[:,0],Y_test,marker='.',c='b',label='Y')
-        # plt.xlabel('X_1')
-        # plt.legend()
         graphs={'X_1':X_test[:,0],'Y':Y_test,'Y_pred':Y_pred}
         end=perf_counter()
         return svr.get_params(),mean_squared_error(Y_test,Y_pred),graphs,end-start
@@ -73,50 +57,10 @@ def SVR_b(X,Y,auto=True,params=None):
         svr = SVR()
         params = {'C':[1,2,3],'kernel':['linear','poly','rbf'],'degree':[2,3]}
         reg = GridSearchCV(svr, param_grid=params, cv=10, scoring=scorer)
-         #n_jobs = -1
         reg.fit(X,Y)
 
-        #print(reg.cv_results_['mean_test_score']) #Scores comparés
-        #print(reg.best_params_) #Meilleures valeurs de paramètres
-        #print(reg.best_score_) #Meilleur score
-
-
         Y_pred=reg.predict(X)
-
-        # fig1=plt.figure()
-        # plt.scatter(Y,Y_pred,marker='.')
-        # plt.xlabel('y')
-        # plt.ylabel('Y_pred')
-        #
-        # fig2=plt.figure()
-        # plt.scatter(X[:,0],Y_pred,marker='.',c='r',label='Y_pred')
-        # plt.scatter(X[:,0],Y,marker='.',c='b',label='Y')
-        # plt.xlabel('X_1')
-        # plt.legend()
 
         graphs = {'X_1': X[:, 0], 'Y': Y, 'Y_pred': Y_pred}
         end = perf_counter()
         return reg.best_params_,reg.best_score_,graphs,end-start
-
-###Test
-# import numpy as np
-
-
-# dur=5
-# t = np.arange(0,dur,0.01)
-
-# sinusoid = np.transpose(2*t)
-# t= np.transpose(np.array([t,t**2]))
-# sinusoid=np.random.normal(0,1,sinusoid.shape)+sinusoid
-# p=[1.0,'linear']
-# print(SVR_b(X=t,Y=sinusoid,auto=False,params=p))
-
-
-# # df=pd.read_csv('data_breast_cancer.csv',encoding='latin-1',sep=',')
-# # df['diagnosis']=(df['diagnosis']=='M').astype(int)
-# # del df['id']
-# # del df['Unnamed: 32']
-# # X=df.iloc[:,2:len(list(df.columns))]
-# # Y=df.iloc[:,1]
-
-
