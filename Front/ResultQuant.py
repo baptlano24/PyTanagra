@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QDialog, QPushButton, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QFormLayout, \
-    QMainWindow, QWidget
+    QMainWindow, QWidget, QTabWidget
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import seaborn as sn
@@ -24,16 +24,13 @@ class Window_Quant(QMainWindow):
         # it takes the `figure` instance as a parameter to __init__
         self.canvas = FigureCanvas(self.figure)
 
-        # this is the Navigation widget
-        # it takes the Canvas widget and a parent
-        mtitle = QLabel('Model Conclusion', self)
-
         wid = QWidget(self)
         self.setCentralWidget(wid)
+        tabWidget = QTabWidget()
+        tabWidget.addTab(self.table_model, 'Model Conclusion')
+        tabWidget.addTab(self.canvas, 'Graph')
         layout = QVBoxLayout()
-        layout.addWidget(mtitle)
-        layout.addWidget(self.table_model)
-        layout.addWidget(self.canvas)
+        layout.addWidget(tabWidget)
         wid.setLayout(layout)
 
     def upload_model(self):
@@ -60,7 +57,8 @@ class Window_Quant(QMainWindow):
 
         ax1.set_title("Regression", fontsize=15)
         ax1.scatter(self.data["X_1"], self.data["Y"],marker='o',c='b',label='Raw data')
-        if self.data["X_1"]==sort(self.data["X_1"]):
+        
+        if all(self.data["X_1"][i] <= self.data["X_1"][i + 1] for i in range(len(self.data["X_1"]) - 1)):
             ax1.plot(self.data["X_1"], self.data["Y_pred"],'r-',label='Prediction')
         else:
             ax1.scatter(self.data["X_1"], self.data["Y_pred"], marker='.', c='r', label='Prediction')

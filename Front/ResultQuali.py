@@ -1,6 +1,6 @@
 
 from PyQt5.QtWidgets import QDialog, QPushButton, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QFormLayout, \
-    QMainWindow, QWidget
+    QMainWindow, QWidget, QTabWidget
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import seaborn as sn
@@ -30,22 +30,15 @@ class Window(QMainWindow):
 
         # this is the Navigation widget
         # it takes the Canvas widget and a parent
-        mtitle = QLabel('Model Conclusion', self)
-        conf_mat = QLabel('Confusion Matrix', self)
-        pca_score = QLabel('PCA graph', self)
-        score = QLabel('Score Table', self)
-
+        tabWidget = QTabWidget()
+        tabWidget.addTab(self.table_model,'Model Conclusion')
+        tabWidget.addTab(self.canvas,'Confusion Matrix')
+        tabWidget.addTab(self.canvas_pca,'PCA graph')
+        tabWidget.addTab(self.table,'Score Table')
         wid = QWidget(self)
         self.setCentralWidget(wid)
         layout = QVBoxLayout()
-        layout.addWidget(mtitle)
-        layout.addWidget(self.table_model)
-        layout.addWidget(conf_mat)
-        layout.addWidget(self.canvas)
-        layout.addWidget(pca_score)
-        layout.addWidget(self.canvas_pca)
-        layout.addWidget(score)
-        layout.addWidget(self.table)
+        layout.addWidget(tabWidget)
         wid.setLayout(layout)
 
     def upload_table(self):

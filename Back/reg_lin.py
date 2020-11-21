@@ -28,20 +28,20 @@ def regression_lin(X, y, Auto, intercept = True, normal = False):
         reg = search.best_estimator_  # best model
 
     else:
-    # If Auto=False, the user chooses the parameters
-    #Creation of the model
-    reg = LinearRegression(fit_intercept=intercept, normalize=normal)
-    reg.fit(X_train, y_train)
+        #If Auto=False, the user chooses the parameters
+        #Creation of the model
+        reg = LinearRegression(fit_intercept=intercept, normalize=normal)
+        reg.fit(X_train, y_train)
 
-    # Prediction
-    y_pred = reg.predict(X_test)
+        # Prediction
+        y_pred = reg.predict(X_test)
 
-    # Evaluation
-    mse = mean_squared_error(y_test, y_pred)
+        # Evaluation
+        mse = mean_squared_error(y_test, y_pred)
 
-    graph = {'X_1': X_test[:,0], 'Y': y_test, 'Y_pred': y_pred}
+        graph = {'X_1': X_test[:,0], 'Y': y_test, 'Y_pred': y_pred}
 
-    done = time() # ending
-    elapsed = done - start # computation time
+        done = time() # ending
+        elapsed = done - start # computation time
 
-    return reg.get_params(), mse, graph, elapsed
+        return reg.get_params(), mse, graph, elapsed
