@@ -1,6 +1,5 @@
 
-from PyQt5.QtWidgets import QDialog, QPushButton, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QFormLayout, \
-    QMainWindow, QWidget, QTabWidget
+from PyQt5.QtWidgets import  QVBoxLayout, QTableWidget, QTableWidgetItem,QMainWindow, QWidget, QTabWidget
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import seaborn as sn

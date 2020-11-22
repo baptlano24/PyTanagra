@@ -4,7 +4,8 @@ from time import time
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_squared_error, make_scorer
 
-def regression_lin(X, y, Auto, intercept = True, normal = False):
+
+def regression_lin(X, y, Auto, intercept=True, normal=False):
     # X = features
     # y = target
 
@@ -21,15 +22,28 @@ def regression_lin(X, y, Auto, intercept = True, normal = False):
         params = {"fit_intercept": [True, False], "normalize": [True, False]}
 
         # Cross-Validation
-        search = GridSearchCV(modele, param_grid=params, cv=5, scoring=scorer)
+        search = GridSearchCV(modele, param_grid=params, cv=5, scoring=scorer,n_jobs=-1)
         search.fit(X_train, y_train)
 
         # Outputs
         reg = search.best_estimator_  # best model
 
+        # Prediction
+        y_pred = reg.predict(X_test)
+
+        # Evaluation
+        mse = mean_squared_error(y_test, y_pred)
+
+        graph = {'X_1': X_test[:, 0], 'Y': y_test, 'Y_pred': y_pred}
+
+        done = time()  # ending
+        elapsed = done - start  # computation time
+
+        return reg.get_params(), mse, graph, elapsed
+
     else:
-        #If Auto=False, the user chooses the parameters
-        #Creation of the model
+        # If Auto=False, the user chooses the parameters
+        # Creation of the model
         reg = LinearRegression(fit_intercept=intercept, normalize=normal)
         reg.fit(X_train, y_train)
 
@@ -39,9 +53,9 @@ def regression_lin(X, y, Auto, intercept = True, normal = False):
         # Evaluation
         mse = mean_squared_error(y_test, y_pred)
 
-        graph = {'X_1': X_test[:,0], 'Y': y_test, 'Y_pred': y_pred}
+        graph = {'X_1': X_test[:, 0], 'Y': y_test, 'Y_pred': y_pred}
 
-        done = time() # ending
-        elapsed = done - start # computation time
+        done = time()  # ending
+        elapsed = done - start  # computation time
 
         return reg.get_params(), mse, graph, elapsed

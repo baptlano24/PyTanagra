@@ -46,7 +46,7 @@ class Window_Quant(QMainWindow):
         self.data = graph
         self.info_model = model
         self.info_model["time"] = time
-        self.info_model["R2"] = score
+        self.info_model["MSE"] = score
         self.upload_model()
         self.plot()
 
@@ -57,7 +57,7 @@ class Window_Quant(QMainWindow):
 
         ax1.set_title("Regression", fontsize=15)
         ax1.scatter(self.data["X_1"], self.data["Y"],marker='o',c='b',label='Raw data')
-        
+
         if all(self.data["X_1"][i] <= self.data["X_1"][i + 1] for i in range(len(self.data["X_1"]) - 1)):
             ax1.plot(self.data["X_1"], self.data["Y_pred"],'r-',label='Prediction')
         else:
