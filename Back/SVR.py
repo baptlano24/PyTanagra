@@ -42,7 +42,7 @@ def SVR_b(X,Y,auto=True,params=None):
         if k=='linear':
             svr = SVR(kernel=k,C=C)
         else:
-            svr = SVR(kernel=k,degree=deg,C=C,n_jobs=-1)
+            svr = SVR(kernel=k,degree=deg,C=C)
         X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.3)
         svr.fit(X_train,Y_train)
 

@@ -7,7 +7,7 @@ from sklearn import preprocessing
 
 
 class Window_Quant(QMainWindow):
-    "svr.get_params(), svr.score(X_test, Y_test), graphs, end - start"
+    "Window which show the result of model with graph and table"
     def __init__(self, parent=None, data=None, dict=None):
         super(Window_Quant, self).__init__(parent)
 
@@ -34,6 +34,7 @@ class Window_Quant(QMainWindow):
         wid.setLayout(layout)
 
     def upload_model(self):
+        """Complete item of the table"""
         self.table_model.setColumnCount(len(self.info_model))
         self.table_model.setRowCount(1)
         self.table_model.setHorizontalHeaderLabels(list(self.info_model.keys()))
@@ -42,7 +43,7 @@ class Window_Quant(QMainWindow):
             self.table_model.setItem(0, column, new_item)
 
     def setData(self, model,score, graph, time):
-
+        """Setting all data and then plot and complet Table"""
         self.data = graph
         self.info_model = model
         self.info_model["time"] = time
@@ -51,7 +52,7 @@ class Window_Quant(QMainWindow):
         self.plot()
 
     def plot(self):
-        le = preprocessing.LabelEncoder()
+        """Plot Graph """
         self.figure.clear()
         ax = (ax1, ax2) = self.figure.subplots(1, 2)
 

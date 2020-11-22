@@ -81,7 +81,6 @@ class ModelQualitative(QtWidgets.QDialog, Ui_Model_quali):
         """When 'Use ? checkbox is checked => All Hyperparameter and Auto Checkbox is allowed
          Else still disabled adn we clear the line edits"""
         if self.LogiR_use.isChecked():
-            print("FDP REAGI")
             self.LogiR_auto.setDisabled(False)
             self.LogiR_C.setReadOnly(False)
             self.combo_penality.setDisabled(False)

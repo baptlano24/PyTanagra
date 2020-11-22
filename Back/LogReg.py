@@ -41,7 +41,7 @@ def LogReg(X,Y,auto=True,params=None):
 
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3)
 
-        reg=LogisticRegression(solver="saga",penalty=penalty, C=C, n_jobs=-1)
+        reg=LogisticRegression(solver="saga",penalty=penalty, C=C)
         reg.fit(X_train,Y_train)
         Y_pred=reg.predict(X_test)
 
@@ -60,7 +60,7 @@ def LogReg(X,Y,auto=True,params=None):
         scorer = make_scorer(f1_score,pos_label=Y[0])
         modele = LogisticRegression(solver="saga")
         params = {'C':[0,0.5,1,2,3],'penalty':['l1','l2','elasticnet'],'l1_ratio': [0.5]}
-        reg = GridSearchCV(modele, param_grid=params, cv=10, scoring=scorer,n_jobs=-1)
+        reg = GridSearchCV(modele, param_grid=params, cv=10, scoring=scorer)
         reg.fit(X,Y)
 
         pca = PCA(n_components=2)

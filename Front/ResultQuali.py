@@ -8,6 +8,8 @@ import matplotlib.lines as mlines
 
 
 class Window(QMainWindow):
+
+    """result window which will display curves and tables of values"""
     def __init__(self, parent=None, data=None, dict=None):
         super(Window, self).__init__(parent)
 
@@ -27,8 +29,7 @@ class Window(QMainWindow):
         self.canvas = FigureCanvas(self.figure)
         self.canvas_pca = FigureCanvas(self.figure_pca)
 
-        # this is the Navigation widget
-        # it takes the Canvas widget and a parent
+
         tabWidget = QTabWidget()
         tabWidget.addTab(self.table_model,'Model Conclusion')
         tabWidget.addTab(self.canvas,'Confusion Matrix')
@@ -41,6 +42,7 @@ class Window(QMainWindow):
         wid.setLayout(layout)
 
     def upload_table(self):
+        """Complete the table"""
         self.accuracy = self.dict.pop("accuracy", None)
         self.info_model["accuracy"] = self.accuracy
         self.table.setColumnCount(len(list(self.dict["weighted avg"].keys())))
@@ -53,6 +55,7 @@ class Window(QMainWindow):
                 self.table.setItem(row, column, new_item)
 
     def upload_model(self):
+        """Complete the table"""
         self.table_model.setColumnCount(len(self.info_model))
         self.table_model.setRowCount(1)
         self.table_model.setHorizontalHeaderLabels(list(self.info_model.keys()))
@@ -61,7 +64,7 @@ class Window(QMainWindow):
             self.table_model.setItem(0, column, new_item)
 
     def setData(self, model, matrix, dict_cr, graph, time):
-
+        """Setting all data and then plot and complet Table"""
         self.data = matrix
         self.pca = graph
         self.dict = dict_cr
@@ -73,7 +76,7 @@ class Window(QMainWindow):
         self.plot_pca()
 
     def plot(self):
-        ''' plot some random stuff '''
+        ''' plot result '''
 
         # instead of ax.hold(False)
         self.figure.clear()
@@ -91,6 +94,7 @@ class Window(QMainWindow):
         self.canvas.draw()
 
     def plot_pca(self):
+        """plot pca"""
         new_colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728',
                       '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
                       '#bcbd22', '#17becf']

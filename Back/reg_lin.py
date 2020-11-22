@@ -22,7 +22,7 @@ def regression_lin(X, y, Auto, intercept=True, normal=False):
         params = {"fit_intercept": [True, False], "normalize": [True, False]}
 
         # Cross-Validation
-        search = GridSearchCV(modele, param_grid=params, cv=5, scoring=scorer,n_jobs=-1)
+        search = GridSearchCV(modele, param_grid=params, cv=5, scoring=scorer)
         search.fit(X_train, y_train)
 
         # Outputs

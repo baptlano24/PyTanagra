@@ -10,21 +10,39 @@ from sklearn.decomposition import PCA
 
 
 def knn_class(x, y, auto=True, params=None):
+    """
+       X : numpy array or pandas DataFrame
+           Entries to link to the target variable.
+       Y : numpy array or time series
+           Target variable, category to predict.
+       auto : BOOLEAN, optional
+           if TRUE the function will perform a cross-validation to find the optimal parameters for the Logistic Regression
+           otherwise the user has to specify the parameters used. The default is True.
+       params : LIST of length 2, optional
+           C - regularisation parameter (float>=0),
+           penalty - type of penalty used among : 'none’, ‘l1’, ‘l2’, ‘elasticnet’.The default is None.
+       Returns
+       -------
+       DICT,FLOAT,NUMPY ARRAY
+       Parameters of the chosen model (the best or the one chosen by the user),
+       Score of the chosen model,
+       Values predicted by the model.
+       """
     start = perf_counter()
     label_list = list(set(y))
 
     if auto:
-        leaf_size = np.arange(1, 30)
-        n_neighbors = np.arange(1, 20)
+        leaf_size = np.arange(20, 30)
+        n_neighbors = np.arange(1,20,2)
         distance = ["euclidean", "manhattan", "chebyshev", "minkowski"]
         p = [1, 2]
         parameter = dict(leaf_size=leaf_size, n_neighbors=n_neighbors, p=p, metric=distance)
         knn = KNeighborsClassifier()
-        clf = GridSearchCV(knn, parameter, cv=3, n_jobs=-1)
+        clf = GridSearchCV(knn, parameter, cv=3)
         best_model = clf.fit(x, y)
-        Y_pred=best_model.predict(x)
+        Y_pred = best_model.predict(x)
 
-        cm = confusion_matrix(x, y,labels=label_list)
+        cm = confusion_matrix(y, Y_pred,labels=label_list)
         cr = classification_report(y, Y_pred,target_names=label_list, output_dict=True)
 
         pca = PCA(n_components=2)
@@ -45,7 +63,7 @@ def knn_class(x, y, auto=True, params=None):
         X_test = scalar.transform(X_test)
 
         [leaf_size, n_neighbors, p, metric] = params
-        knn_1 = KNeighborsClassifier(leaf_size=leaf_size, n_neighbors=n_neighbors, p=p, metric=metric, n_jobs=-1)
+        knn_1 = KNeighborsClassifier(leaf_size=leaf_size, n_neighbors=n_neighbors, p=p, metric=metric)
         knn_1.fit(X_train, Y_train)
         y_pred = knn_1.predict(X_test)
 

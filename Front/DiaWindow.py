@@ -21,10 +21,14 @@ import pandas as pd
 class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
     trigger_result = pyqtSignal(list)
 
-    """- Download data
-     - ML Data
-     - SelectVar()
-     - ModelQua()"""
+    """Object which contains all the windows which will allow the user to select his csv file, these features and 
+    target columns, and finally these models. This object will thus send the user's requests to the chosen models and 
+    will then store the results of the models in windows which will be displayed
+     - Download data 
+     - ML_data() 
+     - SelectVar() 
+     - ModelQua() 
+     - ModelQualitative() """
 
     def __init__(self, *args, **kwargs):
         super(Dia_Window, self).__init__(*args, **kwargs)
@@ -51,28 +55,26 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
         self.ml_data.set_target(test[0])
         self.ml_data.set_features(test[1])
         if self.ml_data.target_type.all() == np.float64 or self.ml_data.target_type.all() == np.int64:
-            print("Quantitative")
             self.model_qua.open()
         else:
-            print("QUALI")
             self.model_quali.open()
 
     def model_qua_launch(self, dict):
-        """Launch all model Quantitative from dict signal of ModelQua()"""
+        """Launch all model  from dict signal of ModelQua()
+        After the result output from model Will be stored in
+        the result windows by a setting and then these windows
+        will be sent to the main window by signal"""
         list_result = []
         if "SVR" in dict:
             SVR = dict["SVR"]
             if SVR["Auto"]:
                 result = SVR_b(self.ml_data.feature, self.ml_data.target, SVR["Auto"])
-                print("SVR", result)
                 model, score, graph, time = result
                 result_win = Window_Quant()
                 result_win.setWindowTitle("SVR Result Auto")
                 result_win.setData(model, score, graph, time)
                 list_result.append(result_win)
             else:
-                print(self.ml_data.feature)
-                print(self.ml_data.target)
                 result = SVR_b(self.ml_data.feature, self.ml_data.target, SVR["Auto"], [SVR["C"],
                                                                                         SVR["Kernel"],
                                                                                         SVR["Degree"]])
@@ -81,12 +83,10 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
                 result_win.setWindowTitle("SVR Result")
                 result_win.setData(model, score, graph, time)
                 list_result.append(result_win)
-                print("SVR", result)
         if "LR" in dict:
             LR = dict["LR"]
             if LR["Auto"]:
                 result = regression_lin(self.ml_data.feature, self.ml_data.target, LR["Auto"])
-                print("LR", result)
                 model, score, graph, time = result
                 result_win = Window_Quant()
                 result_win.setWindowTitle("Linear Regression Result Auto")
@@ -99,7 +99,7 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
                 result_win.setWindowTitle("Linear Regression Result")
                 result_win.setData(model, score, graph, time)
                 list_result.append(result_win)
-                print("LR", result)
+
         if "RT" in dict:
             RT = dict["RT"]
             if RT["Auto"]:
@@ -109,7 +109,6 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
                 result_win.setWindowTitle("Regression Tree Result Auto")
                 result_win.setData(model, score, graph, time)
                 list_result.append(result_win)
-                print("RT", result)
             else:
                 result = RegTree(self.ml_data.feature, self.ml_data.target, RT["Auto"], [RT["Criterion"],
                                                                                          RT["Min_Samples_Split"],
@@ -119,15 +118,12 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
                 result_win.setWindowTitle("Regression Tree Result")
                 result_win.setData(model, score, graph, time)
                 list_result.append(result_win)
-                print("RT", result)
 
         if "KNN" in dict:
             KNN = dict["KNN"]
-            print(KNN)
             if KNN["Auto"]:
                 result = knn_class(self.ml_data.feature, self.ml_data.target, KNN["Auto"])
                 model, matrix, dict_cr, graph, time = result
-                print("KNN", result)
                 result_win = Window()
                 result_win.setWindowTitle("KNN Result Auto")
                 result_win.setData(model, matrix, dict_cr, graph, time)
@@ -135,13 +131,8 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
             else:
                 result = knn_class(self.ml_data.feature, self.ml_data.target, KNN["Auto"],
                                    [KNN["leaf_size"], KNN["n_neighbors"], KNN["p"], KNN["metric"]])
-                print("KNN", result)
                 model, matrix, dict_cr, graph, time = result
-                # sn.set(font_scale=1.4)  # for label size
-                # sn.heatmap(result[1], annot=True, annot_kws={"size": 16})  # font size
-                # plt.show()
                 self.model_quali.close()
-                # self.result_quali.widget.set_data(result[1])
                 result_win = Window()
                 result_win.setWindowTitle("KNN Result")
                 result_win.setData(model, matrix, dict_cr, graph, time)
@@ -150,7 +141,6 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
             LogiR = dict["LogiR"]
             if LogiR["Auto"]:
                 result = LogReg(self.ml_data.feature, self.ml_data.target, LogiR["Auto"])
-                print("LogiR", result)
                 model, matrix, dict_cr, graph, time = result
                 result_win = Window()
                 result_win.setWindowTitle("Logistic Regression Result Auto")
@@ -164,12 +154,11 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
                 result_win.setWindowTitle("Logistic Regression Result")
                 result_win.setData(model, matrix, dict_cr, graph, time)
                 list_result.append(result_win)
-                print("LogiR", result)
+
         if "DTC" in dict:
             DTC = dict["DTC"]
             if DTC["Auto"]:
                 result = arbre_clas(self.ml_data.feature, self.ml_data.target, DTC["Auto"])
-                print("result ?")
                 model, matrix, dict_cr, graph, time = result
                 result_win = Window()
                 result_win.setWindowTitle("Tree Decision Classification Auto")
@@ -179,7 +168,6 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
             else:
                 result = arbre_clas(self.ml_data.feature, self.ml_data.target, DTC["Auto"],DTC["max_leaf_nodes"],DTC["max_depth"],DTC["min_samples_split"])
                 model, matrix, dict_cr, graph, time = result
-                print("result no Auto ?")
                 result_win = Window()
                 result_win.setWindowTitle("Tree Decision Classification")
                 result_win.setData(model, matrix, dict_cr, graph, time)
@@ -226,9 +214,9 @@ class Dia_Window(QtWidgets.QDialog, Ui_Dialog):
             head = self.lineEdit_head.text()
         try:
             data = pd.read_csv(file, sep=sep, header=head, na_values=na_value, encoding=enc)
-            self.ml_data.set_pd_data(data)
+            self.ml_data.set_pd_data(data)# setting of Ml_Data object with pandas data frame
             A = QStringListModel(data.columns.tolist())
-            self.select_var.Variables.setModel(A)
+            self.select_var.Variables.setModel(A)# setting Columns of Variable of SelectVar()
         except:
 
             QMessageBox.critical(self, "Erreur", "Erreur")

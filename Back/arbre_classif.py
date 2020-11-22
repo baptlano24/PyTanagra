@@ -6,7 +6,8 @@ from sklearn import metrics
 from sklearn.decomposition import PCA
 from time import time
 
-def arbre_clas(X, y, Auto, nb_regle = None, profondeur = None, nb_indiv = None):
+
+def arbre_clas(X, y, Auto, nb_regle=None, profondeur=None, nb_indiv=None):
     # X = features
     # y = target
     # nb_regle = maximal number of rules in the tree
@@ -20,9 +21,10 @@ def arbre_clas(X, y, Auto, nb_regle = None, profondeur = None, nb_indiv = None):
     # Auto mode --> Optimisation of params
     if Auto:
         # Creation of the model
-        scorer = make_scorer(f1_score,pos_label=label_list[0])
+        scorer = make_scorer(f1_score, pos_label=label_list[0])
         modele = DecisionTreeClassifier()
-        params = {"max_leaf_nodes": list(range(2, 50)), "max_depth": [10, 20, 30], "min_samples_split": [int(taille_ech/10), int(taille_ech/20), int(taille_ech/30)]}
+        params = {"max_leaf_nodes": list(range(2, 50)), "max_depth": [10, 20, 30],
+                  "min_samples_split": [int(taille_ech / 10), int(taille_ech / 20), int(taille_ech / 30)]}
 
         # Cross-Validation
         search = GridSearchCV(modele, param_grid=params, cv=5, scoring=scorer)
@@ -59,10 +61,6 @@ def arbre_clas(X, y, Auto, nb_regle = None, profondeur = None, nb_indiv = None):
         pca = PCA(n_components=2)
         acp = pca.fit_transform(X_test)
         graphs = {'ACP_0': acp[:, 0], 'ACP_1': acp[:, 1], 'Y': y_test, 'Y_pred': pred}
-
-
-
-
 
     done = time()  # ending
     elapsed = done - start  # computation time

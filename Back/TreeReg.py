@@ -54,7 +54,7 @@ def RegTree(X, Y, auto=True, params=None):
                   'min_samples_leaf': [1, 0.01, 0.02]}  # 1, 1%, 2%
         scorer = make_scorer(mean_squared_error)  # default score
         tree = DecisionTreeRegressor()
-        reg = GridSearchCV(tree, param_grid=params, cv=10, scoring=scorer, n_jobs=-1)
+        reg = GridSearchCV(tree, param_grid=params, cv=10, scoring=scorer)
         reg.fit(X, Y)
 
         Y_pred = reg.predict(X)
